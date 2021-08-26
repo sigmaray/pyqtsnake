@@ -1,5 +1,8 @@
 from constants import *
 import random
+import os
+import json
+import sys
 
 
 def gen_default_matrix(cellNum):
@@ -39,3 +42,66 @@ def generateFoodPosition(snakeSegments, cellNum, food=None):
                 })
 
     return random.choice(availableCells)
+
+# def createSettings:
+
+
+def doSettingsExist():
+    return os.path.isfile(SETTINGS_FILE)
+
+
+def createSettingsFile():
+    # file = open(SETTINGS_FILE, 'w+')
+    with open(SETTINGS_FILE, 'w+') as f:
+        f.write(json.dumps(DEFAULT_SETTINGS))
+
+
+def readSettingsFile():
+    with open(SETTINGS_FILE) as f:
+        return json.load(f)
+
+
+def validateSettings(settings):
+
+    for key in ["checkIsOut", "checkIsColliding"]:
+        if not(key in settings.keys()) or (type(settings[key]) != bool):
+            return False
+
+    for key in ["canvasSize", "cellNum", "intervalMilliseconds"]:
+        if not(key in settings.keys()) or (type(settings[key]) != int) or (settings[key] <= 0):
+            return False
+
+    if settings["canvasSize"] < settings["cellNum"]:
+        return False
+
+    if settings["canvasSize"] < 10:
+        return False
+
+    if settings["cellNum"] < 2:
+        return False
+
+    return True
+
+
+# settings = {
+#     "canvasSize": 500,
+#     "cellNum": 15,
+#     "intervalMilliseconds": 150,
+#     "checkIsOut": False,
+#     "checkIsColliding": False,
+# }
+
+def readWriteSettings():
+    if not doSettingsExist():
+        print("settings.json does not exist, creating it")
+        createSettingsFile()
+
+    settings = readSettingsFile()
+
+    if not validateSettings(settings):
+        print("settings.json is not valid. " +
+              "You can delete it and restart the application. " +
+              "App will recreate settings file if it's not present")
+        sys.exit()
+
+    return settings

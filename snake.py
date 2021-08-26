@@ -1,93 +1,139 @@
+# from PyQt5.QtWidgets import (
+#     QApplication,
+#     QPushButton,
+#     QVBoxLayout,
+#     QHBoxLayout,
+#     QWidget,
+#     QCheckBox
+# )
+
 import sys
-
-from PyQt5.QtWidgets import (
-    QApplication,
-    QPushButton,
-    QVBoxLayout,
-    QHBoxLayout,
-    QWidget,
-    QCheckBox
-)
-
-from PyQt5.QtCore import (
-    QTimer
-)
+from PyQt5 import *
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import *
 
 from constants import *
 from lib import *
 
-from PyQt5 import *
-
-BOARD_SIZE = 20
-pos = {"x": 0, "y": 0}
-
-snakeSegments = [
-    {"x": 0, "y": 0},
-    {"x": 1, "y": 0},
-    {"x": 2, "y": 0},
-    {"x": 3, "y": 0},
-    {"x": 4, "y": 0},
-]
-
-state = {
-    "snakeDirection": "right",
-    "isPaused": True,
-    "snakeSegments": snakeSegments,
-    "food": generateFoodPosition(snakeSegments, DEFAULT_SETTINGS["cellNum"]),
-    "switchingDirection": False,
-}
-
-
 class Window(QWidget):
+    speed = 150
+    pos = {"x": 0, "y": 0}
 
     def update(self):
-        if pos["x"] < DEFAULT_SETTINGS["cellNum"] - 1:
-            pos["x"] += 1
+        if self.pos["x"] < self.settings["cellNum"] - 1:
+            self.pos["x"] += 1
         else:
-            pos["x"] = 0
+            self.pos["x"] = 0
 
-        # print(pos)
-        # print("l29")
         self.render_point()
 
     def render_point(self):
         # for row in self.checkboxes:
         for y, row in enumerate(self.checkboxes):
             for x, c in enumerate(row):
-                # [pos["y"]][pos["x"]]
-                # print([y,x])
-                if y == pos["y"] and x == pos["x"]:
+                # [self.pos["y"]][self.pos["x"]]
+                if y == self.pos["y"] and x == self.pos["x"]:
                     c.setEnabled(True)
                     c.setChecked(True)
                 else:
                     c.setChecked(False)
                     c.setEnabled(False)
 
+    def speedMinus(self):
+        if self.speed >= 100:
+            self.speed -= 50
+
+        self.speedLabel.setText(str(self.speed))
+
+        self.timer.stop()
+        self.timer.start(self.speed)
+        # self.timer = QTimer(self)
+        # self.timer.timeout.connect(self.update)
+
+    def speedPlus(self):
+        self.speed += 50
+
+        self.speedLabel.setText(str(self.speed))
+
+        self.timer.stop()
+        self.timer.start(self.speed)
+
+    def add_toolbar(self):
+        # Create pyqt toolbar
+        self.toolBar = QToolBar()
+        self.layout.addWidget(self.toolBar)
+
+        # # Add buttons to toolbar
+        # toolButton = QToolButton()
+        # toolButton.setText("Apple")
+        # toolButton.setCheckable(True)
+        # # toolButton.setAutoExclusive(True)
+        # toolBar.addWidget(toolButton)
+        # toolButton = QToolButton()
+        # toolButton.setText("Orange")
+        # toolButton.setCheckable(True)
+        # # toolButton.setAutoExclusive(True)
+        # toolBar.addWidget(toolButton)
+
+        speedMinus = QAction("speed-", self)
+        speedMinus.triggered.connect(self.speedMinus)
+        self.toolBar.addAction(speedMinus)
+
+        self.speedLabel = QLabel(str(self.speed))
+        self.toolBar.addWidget(self.speedLabel)
+
+        speedPlus = QAction("speed+", self)
+        speedPlus.triggered.connect(self.speedPlus)
+        self.toolBar.addAction(speedPlus)
+
     def __init__(self):
         super().__init__()
-        layout = QVBoxLayout()
+
+        self.layout = QVBoxLayout()
+
+        self.settings = readWriteSettings()
+        print(self.settings)
+
+
+        snakeSegments = [
+            {"x": 0, "y": 0},
+            {"x": 1, "y": 0},
+            {"x": 2, "y": 0},
+            {"x": 3, "y": 0},
+            {"x": 4, "y": 0},
+        ]
+
+        self.state = {
+            "snakeDirection": "right",
+            "isPaused": True,
+            "snakeSegments": snakeSegments,
+            "food": generateFoodPosition(snakeSegments, self.settings["cellNum"]),
+            "switchingDirection": False,
+        }
+
+        self.add_toolbar()
 
         self.checkboxes = []
-        for _ in range(DEFAULT_SETTINGS["cellNum"]):
+        for _ in range(self.settings["cellNum"]):
             row = []
             # vl = QVBoxLayout()
             hl = QHBoxLayout()
 
-            for _ in range(DEFAULT_SETTINGS["cellNum"]):
+            for _ in range(self.settings["cellNum"]):
                 c = QCheckBox()
                 c.setEnabled(False)
                 hl.addWidget(c)
                 row.append(c)
 
             self.checkboxes.append(row)
-            layout.addLayout(hl)
+            self.layout.addLayout(hl)
 
         # Set the layout on the application's window
-        self.setLayout(layout)
+        self.setLayout(self.layout)
 
-        timer = QTimer(self)
-        timer.timeout.connect(self.update)
-        timer.start(100)
+        self.timer = QtCore.QTimer(self)
+        self.timer.timeout.connect(self.update)
+        self.timer.start(self.speed)
 
     def keyPressEvent(self, event):
         allowed_keys = [
@@ -104,30 +150,38 @@ class Window(QWidget):
         # elif event.key() == QtCore.Qt.Key_Enter:
         #     self.proceed()
         k = event.key()
-        print(k)
+
         if k in allowed_keys:
-            print("allowed")
-
             if k == QtCore.Qt.Key_Up:
-                if pos["y"] > 0:
-                    pos["y"] -= 1
+                if self.pos["y"] > 0:
+                    self.pos["y"] -= 1
                 else:
-                    pos["y"] = DEFAULT_SETTINGS["cellNum"] - 1
+                    self.pos["y"] = self.settings["cellNum"] - 1
             elif k == QtCore.Qt.Key_Down:
-                if pos["y"] < DEFAULT_SETTINGS["cellNum"] - 1:
-                    pos["y"] += 1
+                if self.pos["y"] < self.settings["cellNum"] - 1:
+                    self.pos["y"] += 1
                 else:
-                    pos["y"] = 0
+                    self.pos["y"] = 0
+            elif k == QtCore.Qt.Key_Left:
+                if self.pos["x"] > 0:
+                    self.pos["x"] -= 1
+                else:
+                    self.pos["x"] = self.settings["cellNum"] - 1
+            elif k == QtCore.Qt.Key_Right:
+                if self.pos["x"] < self.settings["cellNum"] - 1:
+                    self.pos["x"] += 1
+                else:
+                    self.pos["x"] = 0
 
-            print(pos)
         else:
             event.accept()
         # print(event.key())
 
 
-print(COLORS)
-
 if __name__ == "__main__":
+    if not doSettingsExist():
+        createSettingsFile()
+
     app = QApplication(sys.argv)
     window = Window()
     window.show()

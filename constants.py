@@ -1,5 +1,4 @@
 from munch import Munch
-
 # SETTINGS_STORAGE_KEY = "JSSnakeSettings";
 
 CELL_TYPES = Munch()
@@ -23,3 +22,6 @@ DEFAULT_SETTINGS = {
     "checkIsOut": False,
     "checkIsColliding": False,
 }
+
+SETTINGS_FILE = "settings.json"
+
