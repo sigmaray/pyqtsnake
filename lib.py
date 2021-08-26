@@ -28,6 +28,32 @@ def snakeAndFoodToMatrix(snakeSegments, cellNum, food=None):
     return matrix
 
 
+def isEating(snakeSegments, food):
+    head = snakeSegments[-1]
+    return head.x == food.x and head.y == food.y
+
+
+def isOut(snakeSegments, cellNum):
+    for segment in snakeSegments:
+        if (
+            segment.x < 0 or
+            segment.x > cellNum - 1 or
+            segment.y < 0 or
+            segment.y > cellNum - 1
+        ):
+            return True
+    return False
+
+
+def isColliding(snakeSegments):
+    for i, segment in enumerate(snakeSegments):
+        for j, segment2 in enumerate(snakeSegments):
+            if i != j:
+                if segment.x == segment2.x and segment.y == segment2.y:
+                    return True
+    return False
+
+
 def generateFoodPosition(snakeSegments, cellNum, food=None):
     matrix = snakeAndFoodToMatrix(snakeSegments, cellNum)
     availableCells = []
