@@ -18,38 +18,46 @@ from lib import *
 from settings_dialog import SettingsDialog
 from munch import munchify
 
-LABEL_PLACEHOLDER = " "
-
-
 class Window(QWidget):
+    # https://stackoverflow.com/a/34372471
     EXIT_CODE_REBOOT = -123
+
+    # Add some content to prevent moving of form elements
+    LABEL_PLACEHOLDER = " "
 
     def generateState(self):
         snakeSegments = [
             {"x": 0, "y": 0},
-            {"x": 1, "y": 0},
-            {"x": 2, "y": 0},
-            {"x": 3, "y": 0},
-            {"x": 4, "y": 0},
+            # {"x": 1, "y": 0},
+            # {"x": 2, "y": 0},
+            # {"x": 3, "y": 0},
+            # {"x": 4, "y": 0},
         ]
 
         return munchify({
             "snakeDirection": "right",
-            # "snakeDirection": "left",
-            # "snakeDirection": "down",
             "isPaused": False,
             "snakeSegments": snakeSegments,
             "food": generateFoodPosition(snakeSegments, self.settings.cellNum),
-            # "food": Munch(x=5, y=0),
             "switchingDirection": False,
         })
 
     def restart(self):
         self.state = self.generateState()
-        self.labelStatus.setText(LABEL_PLACEHOLDER)
+        self.labelStatus.setText(self.LABEL_PLACEHOLDER)
         self.timer.start(self.settings.intervalMilliseconds)
 
-    def pauseUnpause(self):
+    def pause(self):
+            self.state.isPaused = True
+            self.timer.stop()
+            self.labelStatus.setText("paused")
+
+    def unpause(self):
+        self.state.isPaused = False
+        self.timer.start(self.settings.intervalMilliseconds)
+        self.labelStatus.setText(self.LABEL_PLACEHOLDER)
+
+    def togglePause(self):
         if not self.state.isPaused:
             self.state.isPaused = True
             # clearInterval(interval);
@@ -58,7 +66,7 @@ class Window(QWidget):
         else:
             self.state.isPaused = False
             self.timer.start(self.settings.intervalMilliseconds)
-            self.labelStatus.setText(LABEL_PLACEHOLDER)
+            self.labelStatus.setText(self.LABEL_PLACEHOLDER)
 
     def endGame(self, message="game is over"):
         # print(message)
@@ -155,12 +163,15 @@ class Window(QWidget):
         self.timer.start(self.settings.intervalMilliseconds)
 
     def showSettings(self):
+        self.pause()
         settings, result = SettingsDialog.run(self.settings)
         if (result):
             writeSettingsFile(settings)
             # self.settings = settings
             # self.restart
             QApplication.exit(Window.EXIT_CODE_REBOOT)
+        else:
+            self.unpause()
 
     def add_toolbar(self):
         # Create pyqt toolbar
@@ -195,7 +206,7 @@ class Window(QWidget):
         self.layout.addWidget(self.toolBar2)
 
         actionPauseUnpause = QAction("(un)pause", self)
-        actionPauseUnpause.triggered.connect(self.pauseUnpause)
+        actionPauseUnpause.triggered.connect(self.togglePause)
         self.toolBar2.addAction(actionPauseUnpause)
 
         actionRestart = QAction("restart", self)
@@ -209,7 +220,7 @@ class Window(QWidget):
         self.toolBar3 = QToolBar()
         self.layout.addWidget(self.toolBar3)
 
-        self.labelStatus = QLabel(LABEL_PLACEHOLDER)
+        self.labelStatus = QLabel(self.LABEL_PLACEHOLDER)
         self.toolBar3.addWidget(self.labelStatus)
 
     def __init__(self):
@@ -267,7 +278,7 @@ class Window(QWidget):
 
         if k in allowed_keys:
             if event.key() == QtCore.Qt.Key_P or event.key() == 1047:
-                self.pauseUnpause()
+                self.togglePause()
             else:
                 if not self.state.switchingDirection and not self.state.isPaused:
                     if k == QtCore.Qt.Key_Up:
@@ -308,12 +319,13 @@ class Window(QWidget):
 
 
 if __name__ == "__main__":
-    currentExitCode = Window.EXIT_CODE_REBOOT
-    while currentExitCode == Window.EXIT_CODE_REBOOT:
+    while True:
         app = QApplication(sys.argv)
         window = Window()
         window.show()
         currentExitCode = app.exec_()
         app = None  # delete the QApplication object
+        if currentExitCode != Window.EXIT_CODE_REBOOT:
+            break
 
     sys.exit(currentExitCode)
