@@ -8,10 +8,11 @@ CELL_TYPES.snakeSegment = "snakeSegment"
 CELL_TYPES.snakeHead = "snakeHead"
 
 COLORS = Munch()
-COLORS.snakeSegment = "CornflowerBlue"
-COLORS.snakeHead = "orange"
-COLORS.segmentBorder = "SlateBlue"
-COLORS.food = "#DDA0DD"
+COLORS.snakeSegment = "Olive"
+COLORS.snakeHead = "Green"
+# COLORS.segmentBorder = "SlateBlue"
+# COLORS.food = "#DDA0DD"
+COLORS.food = "red"
 COLORS.text = "SlateBlue"
 COLORS.canvasColor = "#fff"
 

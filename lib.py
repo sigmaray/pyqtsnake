@@ -1,3 +1,4 @@
+from munch import munchify
 from constants import *
 import random
 import os
@@ -27,7 +28,7 @@ def snakeAndFoodToMatrix(snakeSegments, cellNum, food=None):
         matrix[segment["y"]][segment["x"]] = type
 
     if food:
-        matrix[food["x"]][food["y"]] = CELL_TYPES.food
+        matrix[food["y"]][food["x"]] = CELL_TYPES.food
 
     return matrix
 
@@ -71,7 +72,7 @@ def generateFoodPosition(snakeSegments, cellNum, food=None):
                     "y": y
                 })
 
-    return random.choice(availableCells)
+    return munchify(random.choice(availableCells))
 
 # def createSettings:
 
@@ -137,8 +138,8 @@ def readWriteSettings():
     return settings
 
 
-def genStyleSheet(color):
-    return "color: " + color + ";" + "background-color: #fff"
+def genStyleSheet(color, backgroundColor = "#fff"):
+    return "color: " + color + ";" + "background-color: " + backgroundColor
     return ("QCheckBox::indicator {" +
             "background-color: " + color + "; "
             "}")
@@ -147,19 +148,20 @@ def genStyleSheet(color):
 def matrixToCheckboxes(matrix, checkboxes):
     for y, row in enumerate(matrix):
         for x, value in enumerate(row):
-            if value != CELL_TYPES.empty:
-                color = None
-                if value == CELL_TYPES.empty:
-                    checkboxes[y][x].setChecked(False)
-                else:
-                    checkboxes[y][x].setChecked(True)
-                    if value == CELL_TYPES.snakeSegment:
-                        color = COLORS.snakeSegment
-                    elif value == CELL_TYPES.snakeHead:
-                        color = COLORS.snakeHead
-                    elif value == CELL_TYPES.food:
-                        color = COLORS.food
+            if value == CELL_TYPES.empty:
+                checkboxes[y][x].setChecked(False)
+            else:
+                checkboxes[y][x].setChecked(True)
+                if value == CELL_TYPES.snakeSegment:
+                    color = COLORS.snakeSegment
+                    background = "#fff"
+                elif value == CELL_TYPES.snakeHead:
+                    color = COLORS.snakeHead
+                    background = "#ccc"
+                elif value == CELL_TYPES.food:
+                    color = COLORS.food
+                    background = "#ccc"
 
-                    checkboxes[y][x].setStyleSheet(genStyleSheet(color))
+                checkboxes[y][x].setStyleSheet(genStyleSheet(color, background))
 
 
