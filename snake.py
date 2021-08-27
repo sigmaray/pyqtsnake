@@ -15,12 +15,15 @@ from PyQt5.QtWidgets import *
 
 from constants import *
 from lib import *
-from munch import munchify, unmunchify
+from settings_dialog import SettingsDialog
+from munch import munchify
 
 LABEL_PLACEHOLDER = " "
 
 
 class Window(QWidget):
+    EXIT_CODE_REBOOT = -123
+
     def generateState(self):
         snakeSegments = [
             {"x": 0, "y": 0},
@@ -117,11 +120,24 @@ class Window(QWidget):
 
         self.state.switchingDirection = False
 
-    def decreaseInterval(self):
-        if self.settings.intervalMilliseconds >= 100:
-            self.settings.intervalMilliseconds -= 50
+    def determineDelta(self, intervalMilliseconds, direction = ["up", "down"][0]):
+        if intervalMilliseconds <= 100 and intervalMilliseconds >= 10:
+            delta = 10
+        elif intervalMilliseconds < 10 and intervalMilliseconds > 0:
+            delta = 1
+        elif intervalMilliseconds == 0:
+            if direction == "down":
+                delta = 0
+            elif direction == "up":
+                delta = 1
+        else:
+            delta = 50
+        return delta
 
-        writeSettingsFile(unmunchify(self.settings))
+    def decreaseInterval(self):        
+        self.settings.intervalMilliseconds -= self.determineDelta(self.settings.intervalMilliseconds, "down")
+
+        writeSettingsFile(self.settings)
 
         self.speedLabel.setText(str(self.settings.intervalMilliseconds))
 
@@ -129,14 +145,22 @@ class Window(QWidget):
         self.timer.start(self.settings.intervalMilliseconds)
 
     def increaseInterval(self):
-        self.settings.intervalMilliseconds += 50
+        self.settings.intervalMilliseconds += self.determineDelta(self.settings.intervalMilliseconds, "up")
 
-        writeSettingsFile(unmunchify(self.settings))
+        writeSettingsFile(self.settings)
 
         self.speedLabel.setText(str(self.settings.intervalMilliseconds))
 
         self.timer.stop()
         self.timer.start(self.settings.intervalMilliseconds)
+
+    def showSettings(self):
+        settings, result = SettingsDialog.run()
+        if (result):
+            writeSettingsFile(settings)
+            # self.settings = settings
+            # self.restart
+            QApplication.exit(Window.EXIT_CODE_REBOOT)
 
     def add_toolbar(self):
         # Create pyqt toolbar
@@ -167,22 +191,32 @@ class Window(QWidget):
         actionIntervalPlus.triggered.connect(self.increaseInterval)
         self.toolBar.addAction(actionIntervalPlus)
 
-        actionPauseUnpause = QAction("(un)pause", self)
-        actionPauseUnpause.triggered.connect(self.pauseUnpause)
-        self.toolBar.addAction(actionPauseUnpause)
-
-        actionRestart = QAction("restart", self)
-        actionRestart.triggered.connect(self.restart)
-        self.toolBar.addAction(actionRestart)
-
         self.toolBar2 = QToolBar()
         self.layout.addWidget(self.toolBar2)
 
+        actionPauseUnpause = QAction("(un)pause", self)
+        actionPauseUnpause.triggered.connect(self.pauseUnpause)
+        self.toolBar2.addAction(actionPauseUnpause)
+
+        actionRestart = QAction("restart", self)
+        actionRestart.triggered.connect(self.restart)
+        self.toolBar2.addAction(actionRestart)
+
+        actionSettings = QAction("settings", self)
+        actionSettings.triggered.connect(self.showSettings)
+        self.toolBar2.addAction(actionSettings)
+
+        self.toolBar3 = QToolBar()
+        self.layout.addWidget(self.toolBar3)
+
         self.labelStatus = QLabel(LABEL_PLACEHOLDER)
-        self.toolBar2.addWidget(self.labelStatus)
+        self.toolBar3.addWidget(self.labelStatus)
 
     def __init__(self):
         super().__init__()
+
+        if not doSettingsExist():
+            writeSettingsFile(DEFAULT_SETTINGS)
 
         self.layout = QVBoxLayout()
 
@@ -274,10 +308,12 @@ class Window(QWidget):
 
 
 if __name__ == "__main__":
-    if not doSettingsExist():
-        writeSettingsFile()
+    currentExitCode = Window.EXIT_CODE_REBOOT
+    while currentExitCode == Window.EXIT_CODE_REBOOT:
+        app = QApplication(sys.argv)
+        window = Window()
+        window.show()
+        currentExitCode = app.exec_()
+        app = None  # delete the QApplication object
 
-    app = QApplication(sys.argv)
-    window = Window()
-    window.show()
-    sys.exit(app.exec_())
+    sys.exit(currentExitCode)
