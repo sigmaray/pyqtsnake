@@ -139,7 +139,7 @@ def readWriteSettings():
     return settings
 
 
-def genStyleSheet(color, backgroundColor = "#fff"):
+def genStyleSheet(color = "#000", backgroundColor = "#fff"):
     return "color: " + color + ";" + "background-color: " + backgroundColor
     return ("QCheckBox::indicator {" +
             "background-color: " + color + "; "
@@ -151,6 +151,7 @@ def matrixToCheckboxes(matrix, checkboxes):
         for x, value in enumerate(row):
             if value == CELL_TYPES.empty:
                 checkboxes[y][x].setChecked(False)
+                checkboxes[y][x].setStyleSheet(genStyleSheet())
             else:
                 checkboxes[y][x].setChecked(True)
                 if value == CELL_TYPES.snakeSegment:

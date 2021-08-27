@@ -17,14 +17,55 @@ from constants import *
 from lib import *
 from munch import munchify, unmunchify
 
+LABEL_PLACEHOLDER = "_________________________________"
+
 
 class Window(QWidget):
     interval = 150
     pos = {"x": 0, "y": 0}
 
+    def generateState(self):
+        snakeSegments = [
+            {"x": 0, "y": 0},
+            {"x": 1, "y": 0},
+            {"x": 2, "y": 0},
+            {"x": 3, "y": 0},
+            {"x": 4, "y": 0},
+        ]
+
+        return munchify({
+            "snakeDirection": "right",
+            # "snakeDirection": "left",
+            # "snakeDirection": "down",
+            "isPaused": False,
+            "snakeSegments": snakeSegments,
+            "food": generateFoodPosition(snakeSegments, self.settings.cellNum),
+            # "food": Munch(x=5, y=0),
+            "switchingDirection": False,
+        })
+
+
+    def restart(self):
+        self.state = self.generateState()
+        self.labelStatus.setText(LABEL_PLACEHOLDER)
+        self.timer.start(self.interval)
+
+    def pauseUnpause(self):
+        if not self.state.isPaused:
+            self.state.isPaused = True
+            # clearInterval(interval);
+            self.timer.stop()
+            self.labelStatus.setText("paused")
+        else:
+            self.state.isPaused = False
+            self.timer.start(self.interval)
+            self.labelStatus.setText(LABEL_PLACEHOLDER)
+
     def endGame(self, message="game is over"):
-        print(message)
-        sys.exit()
+        # print(message)
+        self.labelStatus.setText(message)
+        self.timer.stop()
+        # sys.exit()
 
     def update(self):
         if self.pos["x"] < self.settings.cellNum - 1:
@@ -65,16 +106,8 @@ class Window(QWidget):
             else:
                 newHead["y"] = 0
 
-        # del self.state.snakeSegments[0]
-        
-        if not ateFood:
-            # l = len(self.state.snakeSegments)
-            self.state.snakeSegments.pop(0)
-            # self.state.snakeSegments = unmunchify(self.state.snakeSegments)
-            # del self.state.snakeSegments[0]
-            # self.state.snakeSegments = munchify(self.state.snakeSegments)
-            # l2 = len(self.state.snakeSegments)
-            # a = "b"
+        if not ateFood:            
+            self.state.snakeSegments.pop(0)            
         else:
             self.state.food = generateFoodPosition(
                 self.state.snakeSegments, self.settings.cellNum, self.state.food)
@@ -111,7 +144,7 @@ class Window(QWidget):
                     c.setChecked(False)
                     c.setEnabled(False)
 
-    def speedMinus(self):
+    def decreaseInterval(self):
         if self.interval >= 100:
             self.interval -= 50
 
@@ -122,7 +155,7 @@ class Window(QWidget):
         # self.timer = QTimer(self)
         # self.timer.timeout.connect(self.update)
 
-    def speedPlus(self):
+    def increaseInterval(self):
         self.interval += 50
 
         self.speedLabel.setText(str(self.interval))
@@ -132,8 +165,7 @@ class Window(QWidget):
 
     def add_toolbar(self):
         # Create pyqt toolbar
-        self.toolBar = QToolBar()
-        self.layout.addWidget(self.toolBar)
+        
 
         # # Add buttons to toolbar
         # toolButton = QToolButton()
@@ -147,16 +179,35 @@ class Window(QWidget):
         # # toolButton.setAutoExclusive(True)
         # toolBar.addWidget(toolButton)
 
-        speedMinus = QAction("interval-", self)
-        speedMinus.triggered.connect(self.speedMinus)
-        self.toolBar.addAction(speedMinus)
+        self.toolBar = QToolBar()
+        self.layout.addWidget(self.toolBar)
+
+        actionPauseUnpause = QAction("interval-", self)
+        actionPauseUnpause.triggered.connect(self.decreaseInterval)
+        self.toolBar.addAction(actionPauseUnpause)
 
         self.speedLabel = QLabel(str(self.interval))
         self.toolBar.addWidget(self.speedLabel)
 
-        speedPlus = QAction("interval+", self)
-        speedPlus.triggered.connect(self.speedPlus)
-        self.toolBar.addAction(speedPlus)
+        actionIntervalPlus = QAction("interval+", self)
+        actionIntervalPlus.triggered.connect(self.increaseInterval)
+        self.toolBar.addAction(actionIntervalPlus)
+
+        actionPauseUnpause = QAction("(un)pause", self)
+        actionPauseUnpause.triggered.connect(self.pauseUnpause)
+        self.toolBar.addAction(actionPauseUnpause)
+
+        actionRestart = QAction("restart", self)
+        actionRestart.triggered.connect(self.restart)
+        self.toolBar.addAction(actionRestart)
+
+        self.toolBar2 = QToolBar()
+        self.layout.addWidget(self.toolBar2)
+
+        self.labelStatus = QLabel(LABEL_PLACEHOLDER)
+        self.toolBar2.addWidget(self.labelStatus)
+
+        
 
     def __init__(self):
         super().__init__()
@@ -165,24 +216,7 @@ class Window(QWidget):
 
         self.settings = munchify(readWriteSettings())
 
-        snakeSegments = [
-            {"x": 0, "y": 0},
-            {"x": 1, "y": 0},
-            # {"x": 2, "y": 0},
-            # {"x": 3, "y": 0},
-            # {"x": 4, "y": 0},
-        ]
-
-        self.state = munchify({
-            "snakeDirection": "right",
-            # "snakeDirection": "left",
-            # "snakeDirection": "down",
-            "isPaused": True,
-            "snakeSegments": snakeSegments,
-            "food": generateFoodPosition(snakeSegments, self.settings.cellNum),
-            # "food": Munch(x=5, y=0),
-            "switchingDirection": False,
-        })
+        self.state = self.generateState()
 
         self.add_toolbar()
 
@@ -226,58 +260,62 @@ class Window(QWidget):
         k = event.key()
 
         if k in allowed_keys:
-            if not self.state.switchingDirection:
-                if k == QtCore.Qt.Key_Up:
-                    if self.pos["y"] > 0:
-                        self.pos["y"] -= 1
-                    else:
-                        self.pos["y"] = self.settings.cellNum - 1
+            if event.key() == QtCore.Qt.Key_P or event.key() == 1047:
+                self.pauseUnpause()
+            else:
+                if not self.state.switchingDirection and not self.state.isPaused:
+                    if k == QtCore.Qt.Key_Up:
+                        if self.pos["y"] > 0:
+                            self.pos["y"] -= 1
+                        else:
+                            self.pos["y"] = self.settings.cellNum - 1
 
-                    if (
-                        self.state.snakeDirection != "up" and
-                        self.state.snakeDirection != "down"
-                    ):
-                        self.state.snakeDirection = "up"
-                        self.state.switchingDirection = True
+                        if (
+                            self.state.snakeDirection != "up" and
+                            self.state.snakeDirection != "down"
+                        ):
+                            self.state.snakeDirection = "up"
+                            self.state.switchingDirection = True
 
-                elif k == QtCore.Qt.Key_Down:
-                    if self.pos["y"] < self.settings.cellNum - 1:
-                        self.pos["y"] += 1
-                    else:
-                        self.pos["y"] = 0
+                    elif k == QtCore.Qt.Key_Down:
+                        if self.pos["y"] < self.settings.cellNum - 1:
+                            self.pos["y"] += 1
+                        else:
+                            self.pos["y"] = 0
 
-                    if (
-                        self.state.snakeDirection != "up" and
-                        self.state.snakeDirection != "down"
-                    ):
-                        self.state.snakeDirection = "down"
-                        self.state.switchingDirection = True
+                        if (
+                            self.state.snakeDirection != "up" and
+                            self.state.snakeDirection != "down"
+                        ):
+                            self.state.snakeDirection = "down"
+                            self.state.switchingDirection = True
 
-                elif k == QtCore.Qt.Key_Left:
-                    if self.pos["x"] > 0:
-                        self.pos["x"] -= 1
-                    else:
-                        self.pos["x"] = self.settings.cellNum - 1
+                    elif k == QtCore.Qt.Key_Left:
+                        if self.pos["x"] > 0:
+                            self.pos["x"] -= 1
+                        else:
+                            self.pos["x"] = self.settings.cellNum - 1
 
-                    if (
-                        self.state.snakeDirection != "right" and
-                        self.state.snakeDirection != "left"
-                    ):
-                        self.state.snakeDirection = "left"
-                        self.state.switchingDirection = True
+                        if (
+                            self.state.snakeDirection != "right" and
+                            self.state.snakeDirection != "left"
+                        ):
+                            self.state.snakeDirection = "left"
+                            self.state.switchingDirection = True
 
-                elif k == QtCore.Qt.Key_Right:
-                    if self.pos["x"] < self.settings.cellNum - 1:
-                        self.pos["x"] += 1
-                    else:
-                        self.pos["x"] = 0
+                    elif k == QtCore.Qt.Key_Right:
+                        if self.pos["x"] < self.settings.cellNum - 1:
+                            self.pos["x"] += 1
+                        else:
+                            self.pos["x"] = 0
 
-                    if (
-                        self.state.snakeDirection != "right" and
-                        self.state.snakeDirection != "left"
-                    ):
-                        self.state.snakeDirection = "right"
-                        self.state.switchingDirection = True
+                        if (
+                            self.state.snakeDirection != "right" and
+                            self.state.snakeDirection != "left"
+                        ):
+                            self.state.snakeDirection = "right"
+                            self.state.switchingDirection = True
+                    
 
         # else:
         #     event.accept()
