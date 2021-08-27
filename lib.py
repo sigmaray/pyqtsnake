@@ -82,10 +82,9 @@ def doSettingsExist():
     return os.path.isfile(SETTINGS_FILE)
 
 
-def createSettingsFile():
-    # file = open(SETTINGS_FILE, 'w+')
-    with open(SETTINGS_FILE) as f:
-        f.write(json.dumps(DEFAULT_SETTINGS))
+def writeSettingsFile(hashmap):
+    with open(SETTINGS_FILE, 'w') as f:
+        f.write(json.dumps(hashmap))
 
 
 def readSettingsFile():
@@ -120,7 +119,7 @@ def validateSettings(settings):
 def readWriteSettings():
     if not doSettingsExist():
         print("settings.json does not exist, creating it")
-        createSettingsFile()
+        writeSettingsFile(DEFAULT_SETTINGS)
 
     settings = readSettingsFile()
 

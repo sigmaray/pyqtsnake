@@ -17,12 +17,10 @@ from constants import *
 from lib import *
 from munch import munchify, unmunchify
 
-LABEL_PLACEHOLDER = ""
+LABEL_PLACEHOLDER = " "
 
 
-class Window(QWidget):    
-
-
+class Window(QWidget):
     def generateState(self):
         snakeSegments = [
             {"x": 0, "y": 0},
@@ -43,11 +41,10 @@ class Window(QWidget):
             "switchingDirection": False,
         })
 
-
     def restart(self):
         self.state = self.generateState()
         self.labelStatus.setText(LABEL_PLACEHOLDER)
-        self.timer.start(self.interval)
+        self.timer.start(self.settings.intervalMilliseconds)
 
     def pauseUnpause(self):
         if not self.state.isPaused:
@@ -57,7 +54,7 @@ class Window(QWidget):
             self.labelStatus.setText("paused")
         else:
             self.state.isPaused = False
-            self.timer.start(self.interval)
+            self.timer.start(self.settings.intervalMilliseconds)
             self.labelStatus.setText(LABEL_PLACEHOLDER)
 
     def endGame(self, message="game is over"):
@@ -65,7 +62,6 @@ class Window(QWidget):
         self.labelStatus.setText(message)
         self.timer.stop()
         # sys.exit()
-
 
     def game_loop(self):
         ateFood = isEating(self.state.snakeSegments, self.state.food)
@@ -95,8 +91,8 @@ class Window(QWidget):
             else:
                 newHead["y"] = 0
 
-        if not ateFood:            
-            self.state.snakeSegments.pop(0)            
+        if not ateFood:
+            self.state.snakeSegments.pop(0)
         else:
             self.state.food = generateFoodPosition(
                 self.state.snakeSegments, self.settings.cellNum, self.state.food)
@@ -122,27 +118,28 @@ class Window(QWidget):
         self.state.switchingDirection = False
 
     def decreaseInterval(self):
-        if self.interval >= 100:
-            self.interval -= 50
+        if self.settings.intervalMilliseconds >= 100:
+            self.settings.intervalMilliseconds -= 50
 
-        self.speedLabel.setText(str(self.interval))
+        writeSettingsFile(unmunchify(self.settings))
+
+        self.speedLabel.setText(str(self.settings.intervalMilliseconds))
 
         self.timer.stop()
-        self.timer.start(self.interval)
-        # self.timer = QTimer(self)
-        # self.timer.timeout.connect(self.update)
+        self.timer.start(self.settings.intervalMilliseconds)
 
     def increaseInterval(self):
-        self.interval += 50
+        self.settings.intervalMilliseconds += 50
 
-        self.speedLabel.setText(str(self.interval))
+        writeSettingsFile(unmunchify(self.settings))
+
+        self.speedLabel.setText(str(self.settings.intervalMilliseconds))
 
         self.timer.stop()
-        self.timer.start(self.interval)
+        self.timer.start(self.settings.intervalMilliseconds)
 
     def add_toolbar(self):
         # Create pyqt toolbar
-        
 
         # # Add buttons to toolbar
         # toolButton = QToolButton()
@@ -163,7 +160,7 @@ class Window(QWidget):
         actionPauseUnpause.triggered.connect(self.decreaseInterval)
         self.toolBar.addAction(actionPauseUnpause)
 
-        self.speedLabel = QLabel(str(self.interval))
+        self.speedLabel = QLabel(str(self.settings.intervalMilliseconds))
         self.toolBar.addWidget(self.speedLabel)
 
         actionIntervalPlus = QAction("interval+", self)
@@ -184,16 +181,12 @@ class Window(QWidget):
         self.labelStatus = QLabel(LABEL_PLACEHOLDER)
         self.toolBar2.addWidget(self.labelStatus)
 
-        
-
     def __init__(self):
         super().__init__()
 
         self.layout = QVBoxLayout()
-        
-        self.settings = munchify(readWriteSettings())
 
-        self.interval = self.settings.intervalMilliseconds
+        self.settings = munchify(readWriteSettings())
 
         self.state = self.generateState()
 
@@ -220,7 +213,7 @@ class Window(QWidget):
 
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.game_loop)
-        self.timer.start(self.interval)
+        self.timer.start(self.settings.intervalMilliseconds)
 
     def keyPressEvent(self, event):
         allowed_keys = [
@@ -274,7 +267,6 @@ class Window(QWidget):
                         ):
                             self.state.snakeDirection = "right"
                             self.state.switchingDirection = True
-                    
 
         # else:
         #     event.accept()
@@ -283,7 +275,7 @@ class Window(QWidget):
 
 if __name__ == "__main__":
     if not doSettingsExist():
-        createSettingsFile()
+        writeSettingsFile()
 
     app = QApplication(sys.argv)
     window = Window()
