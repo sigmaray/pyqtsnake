@@ -129,8 +129,18 @@ class Window(QWidget):
         self.state.switchingDirection = False
 
     def determineDelta(self, intervalMilliseconds, direction = ["up", "down"][0]):
-        if intervalMilliseconds <= 100 and intervalMilliseconds >= 10:
+        if intervalMilliseconds <= 150 and intervalMilliseconds >= 20:
             delta = 10
+        elif intervalMilliseconds < 20 and intervalMilliseconds > 10:
+            if direction == "down":
+                delta = intervalMilliseconds - 10
+            elif direction == "up":
+                delta = 20 - intervalMilliseconds
+        elif intervalMilliseconds == 10:
+            if direction == "down":
+                delta = 1
+            elif direction == "up":
+                delta = 10
         elif intervalMilliseconds < 10 and intervalMilliseconds > 0:
             delta = 1
         elif intervalMilliseconds == 0:
@@ -267,7 +277,7 @@ class Window(QWidget):
             QtCore.Qt.Key_Left,
             QtCore.Qt.Key_Right,
             QtCore.Qt.Key_P,
-            1047  # "p" or "з" in russian layout
+            1047  # "p" in russian layout
         ]
         # if event.key() == QtCore.Qt.Key_Q:
         #     print "Killing"
