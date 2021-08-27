@@ -72,6 +72,7 @@ def generateFoodPosition(snakeSegments, cellNum, food=None):
                     "y": y
                 })
 
+    if len(availableCells) == 0: return None
     return munchify(random.choice(availableCells))
 
 # def createSettings:

@@ -22,7 +22,7 @@ class Window(QWidget):
     interval = 150
     pos = {"x": 0, "y": 0}
 
-    def end_game(message="game is over"):
+    def endGame(self, message="game is over"):
         print(message)
         sys.exit()
 
@@ -168,9 +168,9 @@ class Window(QWidget):
         snakeSegments = [
             {"x": 0, "y": 0},
             {"x": 1, "y": 0},
-            {"x": 2, "y": 0},
-            {"x": 3, "y": 0},
-            {"x": 4, "y": 0},
+            # {"x": 2, "y": 0},
+            # {"x": 3, "y": 0},
+            # {"x": 4, "y": 0},
         ]
 
         self.state = munchify({
@@ -179,8 +179,8 @@ class Window(QWidget):
             # "snakeDirection": "down",
             "isPaused": True,
             "snakeSegments": snakeSegments,
-            # "food": generateFoodPosition(snakeSegments, self.settings.cellNum),
-            "food": Munch(x=5, y=0),
+            "food": generateFoodPosition(snakeSegments, self.settings.cellNum),
+            # "food": Munch(x=5, y=0),
             "switchingDirection": False,
         })
 
