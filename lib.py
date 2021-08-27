@@ -99,7 +99,7 @@ def validateSettings(settings):
             return False
 
     for key in ["cellNum", "intervalMilliseconds"]:
-        if not(key in settings.keys()) or (type(settings[key]) != int) or (settings[key] <= 0):
+        if not(key in settings.keys()) or (type(settings[key]) != int) or (settings[key] < 0):
             return False
 
     if settings["cellNum"] < 2:

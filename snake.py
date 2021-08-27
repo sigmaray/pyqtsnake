@@ -155,7 +155,7 @@ class Window(QWidget):
         self.timer.start(self.settings.intervalMilliseconds)
 
     def showSettings(self):
-        settings, result = SettingsDialog.run()
+        settings, result = SettingsDialog.run(self.settings)
         if (result):
             writeSettingsFile(settings)
             # self.settings = settings
