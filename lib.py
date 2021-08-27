@@ -132,11 +132,14 @@ def readWriteSettings():
     return settings
 
 
-def genStyleSheet(color = "#000", backgroundColor = "#fff"):
-    return "color: " + color + ";" + "background-color: " + backgroundColor
-    return ("QCheckBox::indicator {" +
-            "background-color: " + color + "; "
-            "}")
+def genStyleSheet(backgroundColor = "#fff", color = "#fff"):
+    if sys.platform == "win32":
+        return ("QCheckBox::indicator {" +
+                "background-color: " + color + "; "
+                "}"
+                )
+    else:
+        return "color: " + color + ";" + "background-color: " + backgroundColor
 
 
 def matrixToCheckboxes(matrix, checkboxes):
@@ -144,19 +147,19 @@ def matrixToCheckboxes(matrix, checkboxes):
         for x, value in enumerate(row):
             if value == CELL_TYPES.empty:
                 checkboxes[y][x].setChecked(False)
-                checkboxes[y][x].setStyleSheet(genStyleSheet())
+                checkboxes[y][x].setStyleSheet(genStyleSheet('#fff'))
             else:
                 checkboxes[y][x].setChecked(True)
                 if value == CELL_TYPES.snakeSegment:
                     color = COLORS.snakeSegment
-                    background = "#fff"
+                    backgroundColor = "#fff"
                 elif value == CELL_TYPES.snakeHead:
                     color = COLORS.snakeHead
-                    background = "#ccc"
+                    backgroundColor = "#ccc"
                 elif value == CELL_TYPES.food:
                     color = COLORS.food
-                    background = "#ccc"
+                    backgroundColor = "#ccc"
 
-                checkboxes[y][x].setStyleSheet(genStyleSheet(color, background))
+                checkboxes[y][x].setStyleSheet(genStyleSheet(backgroundColor, color))
 
 
