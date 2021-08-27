@@ -17,12 +17,11 @@ from constants import *
 from lib import *
 from munch import munchify, unmunchify
 
-LABEL_PLACEHOLDER = "_________________________________"
+LABEL_PLACEHOLDER = ""
 
 
-class Window(QWidget):
-    interval = 150
-    pos = {"x": 0, "y": 0}
+class Window(QWidget):    
+
 
     def generateState(self):
         snakeSegments = [
@@ -67,16 +66,6 @@ class Window(QWidget):
         self.timer.stop()
         # sys.exit()
 
-    def update(self):
-        if self.pos["x"] < self.settings.cellNum - 1:
-            self.pos["x"] += 1
-        else:
-            self.pos["x"] = 0
-
-        # self.render_point()
-        # self.renderMatrixToCheckboxes()
-
-        self.game_loop()
 
     def game_loop(self):
         ateFood = isEating(self.state.snakeSegments, self.state.food)
@@ -131,18 +120,6 @@ class Window(QWidget):
         matrixToCheckboxes(matrix, self.checkboxes)
 
         self.state.switchingDirection = False
-
-    def render_point(self):
-        # for row in self.checkboxes:
-        for y, row in enumerate(self.checkboxes):
-            for x, c in enumerate(row):
-                # [self.pos["y"]][self.pos["x"]]
-                if y == self.pos["y"] and x == self.pos["x"]:
-                    c.setEnabled(True)
-                    c.setChecked(True)
-                else:
-                    c.setChecked(False)
-                    c.setEnabled(False)
 
     def decreaseInterval(self):
         if self.interval >= 100:
@@ -213,8 +190,10 @@ class Window(QWidget):
         super().__init__()
 
         self.layout = QVBoxLayout()
-
+        
         self.settings = munchify(readWriteSettings())
+
+        self.interval = self.settings.intervalMilliseconds
 
         self.state = self.generateState()
 
@@ -240,7 +219,7 @@ class Window(QWidget):
         self.setLayout(self.layout)
 
         self.timer = QtCore.QTimer(self)
-        self.timer.timeout.connect(self.update)
+        self.timer.timeout.connect(self.game_loop)
         self.timer.start(self.interval)
 
     def keyPressEvent(self, event):
@@ -265,11 +244,6 @@ class Window(QWidget):
             else:
                 if not self.state.switchingDirection and not self.state.isPaused:
                     if k == QtCore.Qt.Key_Up:
-                        if self.pos["y"] > 0:
-                            self.pos["y"] -= 1
-                        else:
-                            self.pos["y"] = self.settings.cellNum - 1
-
                         if (
                             self.state.snakeDirection != "up" and
                             self.state.snakeDirection != "down"
@@ -278,11 +252,6 @@ class Window(QWidget):
                             self.state.switchingDirection = True
 
                     elif k == QtCore.Qt.Key_Down:
-                        if self.pos["y"] < self.settings.cellNum - 1:
-                            self.pos["y"] += 1
-                        else:
-                            self.pos["y"] = 0
-
                         if (
                             self.state.snakeDirection != "up" and
                             self.state.snakeDirection != "down"
@@ -291,11 +260,6 @@ class Window(QWidget):
                             self.state.switchingDirection = True
 
                     elif k == QtCore.Qt.Key_Left:
-                        if self.pos["x"] > 0:
-                            self.pos["x"] -= 1
-                        else:
-                            self.pos["x"] = self.settings.cellNum - 1
-
                         if (
                             self.state.snakeDirection != "right" and
                             self.state.snakeDirection != "left"
@@ -304,11 +268,6 @@ class Window(QWidget):
                             self.state.switchingDirection = True
 
                     elif k == QtCore.Qt.Key_Right:
-                        if self.pos["x"] < self.settings.cellNum - 1:
-                            self.pos["x"] += 1
-                        else:
-                            self.pos["x"] = 0
-
                         if (
                             self.state.snakeDirection != "right" and
                             self.state.snakeDirection != "left"

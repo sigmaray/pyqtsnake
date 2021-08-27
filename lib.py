@@ -84,7 +84,7 @@ def doSettingsExist():
 
 def createSettingsFile():
     # file = open(SETTINGS_FILE, 'w+')
-    with open(SETTINGS_FILE, 'w+') as f:
+    with open(SETTINGS_FILE) as f:
         f.write(json.dumps(DEFAULT_SETTINGS))
 
 
@@ -99,15 +99,9 @@ def validateSettings(settings):
         if not(key in settings.keys()) or (type(settings[key]) != bool):
             return False
 
-    for key in ["canvasSize", "cellNum", "intervalMilliseconds"]:
+    for key in ["cellNum", "intervalMilliseconds"]:
         if not(key in settings.keys()) or (type(settings[key]) != int) or (settings[key] <= 0):
             return False
-
-    if settings["canvasSize"] < settings["cellNum"]:
-        return False
-
-    if settings["canvasSize"] < 10:
-        return False
 
     if settings["cellNum"] < 2:
         return False
