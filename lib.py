@@ -4,11 +4,15 @@ import os
 import json
 import sys
 
+def deep_copy(o):
+    return json.loads(json.dumps(o))
+
 
 def gen_default_matrix(cellNum):
-    return [
+    matrix = [
         [CELL_TYPES.empty] * cellNum
     ] * cellNum
+    return deep_copy(matrix)
 
 
 def snakeAndFoodToMatrix(snakeSegments, cellNum, food=None):
@@ -20,10 +24,10 @@ def snakeAndFoodToMatrix(snakeSegments, cellNum, food=None):
         else:
             type = CELL_TYPES.snakeSegment
 
-        matrix[segment["x"]][segment["y"]] = type
+        matrix[segment["y"]][segment["x"]] = type
 
     if food:
-        matrix[food["y"]][food["x"]] = CELL_TYPES.food
+        matrix[food["x"]][food["y"]] = CELL_TYPES.food
 
     return matrix
 
@@ -131,3 +135,31 @@ def readWriteSettings():
         sys.exit()
 
     return settings
+
+
+def genStyleSheet(color):
+    return "color: " + color + ";" + "background-color: #fff"
+    return ("QCheckBox::indicator {" +
+            "background-color: " + color + "; "
+            "}")
+
+
+def matrixToCheckboxes(matrix, checkboxes):
+    for y, row in enumerate(matrix):
+        for x, value in enumerate(row):
+            if value != CELL_TYPES.empty:
+                color = None
+                if value == CELL_TYPES.empty:
+                    checkboxes[y][x].setChecked(False)
+                else:
+                    checkboxes[y][x].setChecked(True)
+                    if value == CELL_TYPES.snakeSegment:
+                        color = COLORS.snakeSegment
+                    elif value == CELL_TYPES.snakeHead:
+                        color = COLORS.snakeHead
+                    elif value == CELL_TYPES.food:
+                        color = COLORS.food
+
+                    checkboxes[y][x].setStyleSheet(genStyleSheet(color))
+
+

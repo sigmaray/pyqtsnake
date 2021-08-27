@@ -7,6 +7,7 @@
 #     QCheckBox
 # )
 
+from copy import deepcopy
 import sys
 from PyQt5 import *
 from PyQt5 import QtCore
@@ -14,6 +15,7 @@ from PyQt5.QtWidgets import *
 
 from constants import *
 from lib import *
+
 
 class Window(QWidget):
     speed = 150
@@ -26,6 +28,17 @@ class Window(QWidget):
             self.pos["x"] = 0
 
         self.render_point()
+        # self.renderMatrixToCheckboxes()
+        matrix = snakeAndFoodToMatrix(self.state["snakeSegments"],
+                                      self.settings["cellNum"], self.state["food"])
+
+        matrixToCheckboxes(matrix, self.checkboxes)
+
+    def game_loop(self):
+        ateFood = isEating(self.state["snakeSegments"], self.state["food"])
+
+        head = self.state.snakeSegments[-1]
+        newHead = deepcopy(head)
 
     def render_point(self):
         # for row in self.checkboxes:
@@ -94,7 +107,6 @@ class Window(QWidget):
         self.settings = readWriteSettings()
         print(self.settings)
 
-
         snakeSegments = [
             {"x": 0, "y": 0},
             {"x": 1, "y": 0},
@@ -122,6 +134,7 @@ class Window(QWidget):
             for _ in range(self.settings["cellNum"]):
                 c = QCheckBox()
                 c.setEnabled(False)
+                c.setStyleSheet(genStyleSheet(COLORS.canvasColor))
                 hl.addWidget(c)
                 row.append(c)
 

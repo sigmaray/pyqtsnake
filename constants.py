@@ -9,11 +9,11 @@ CELL_TYPES.snakeHead = "snakeHead"
 
 COLORS = Munch()
 COLORS.snakeSegment = "CornflowerBlue"
-COLORS.snakeHead = "white"
+COLORS.snakeHead = "orange"
 COLORS.segmentBorder = "SlateBlue"
 COLORS.food = "#DDA0DD"
 COLORS.text = "SlateBlue"
-COLORS.canvasColor = "#eee"
+COLORS.canvasColor = "#fff"
 
 DEFAULT_SETTINGS = {
     "canvasSize": 500,
