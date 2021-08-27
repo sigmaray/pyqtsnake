@@ -15,6 +15,7 @@ from PyQt5.QtWidgets import *
 
 from constants import *
 from lib import *
+from munch import munchify
 
 
 class Window(QWidget):
@@ -22,20 +23,20 @@ class Window(QWidget):
     pos = {"x": 0, "y": 0}
 
     def update(self):
-        if self.pos["x"] < self.settings["cellNum"] - 1:
+        if self.pos["x"] < self.settings.cellNum - 1:
             self.pos["x"] += 1
         else:
             self.pos["x"] = 0
 
         self.render_point()
         # self.renderMatrixToCheckboxes()
-        matrix = snakeAndFoodToMatrix(self.state["snakeSegments"],
-                                      self.settings["cellNum"], self.state["food"])
+        matrix = snakeAndFoodToMatrix(self.state.snakeSegments,
+                                      self.settings.cellNum, self.state.food)
 
         matrixToCheckboxes(matrix, self.checkboxes)
 
     def game_loop(self):
-        ateFood = isEating(self.state["snakeSegments"], self.state["food"])
+        ateFood = isEating(self.state.snakeSegments, self.state.food)
 
         head = self.state.snakeSegments[-1]
         newHead = deepcopy(head)
@@ -104,7 +105,7 @@ class Window(QWidget):
 
         self.layout = QVBoxLayout()
 
-        self.settings = readWriteSettings()
+        self.settings = munchify(readWriteSettings())
         print(self.settings)
 
         snakeSegments = [
@@ -115,23 +116,23 @@ class Window(QWidget):
             {"x": 4, "y": 0},
         ]
 
-        self.state = {
+        self.state = munchify({
             "snakeDirection": "right",
             "isPaused": True,
             "snakeSegments": snakeSegments,
-            "food": generateFoodPosition(snakeSegments, self.settings["cellNum"]),
+            "food": generateFoodPosition(snakeSegments, self.settings.cellNum),
             "switchingDirection": False,
-        }
+        })
 
         self.add_toolbar()
 
         self.checkboxes = []
-        for _ in range(self.settings["cellNum"]):
+        for _ in range(self.settings.cellNum):
             row = []
             # vl = QVBoxLayout()
             hl = QHBoxLayout()
 
-            for _ in range(self.settings["cellNum"]):
+            for _ in range(self.settings.cellNum):
                 c = QCheckBox()
                 c.setEnabled(False)
                 c.setStyleSheet(genStyleSheet(COLORS.canvasColor))
@@ -169,9 +170,9 @@ class Window(QWidget):
                 if self.pos["y"] > 0:
                     self.pos["y"] -= 1
                 else:
-                    self.pos["y"] = self.settings["cellNum"] - 1
+                    self.pos["y"] = self.settings.cellNum - 1
             elif k == QtCore.Qt.Key_Down:
-                if self.pos["y"] < self.settings["cellNum"] - 1:
+                if self.pos["y"] < self.settings.cellNum - 1:
                     self.pos["y"] += 1
                 else:
                     self.pos["y"] = 0
@@ -179,9 +180,9 @@ class Window(QWidget):
                 if self.pos["x"] > 0:
                     self.pos["x"] -= 1
                 else:
-                    self.pos["x"] = self.settings["cellNum"] - 1
+                    self.pos["x"] = self.settings.cellNum - 1
             elif k == QtCore.Qt.Key_Right:
-                if self.pos["x"] < self.settings["cellNum"] - 1:
+                if self.pos["x"] < self.settings.cellNum - 1:
                     self.pos["x"] += 1
                 else:
                     self.pos["x"] = 0
