@@ -1,1 +1,1 @@
-{"cellNum": 20, "intervalMilliseconds": 100, "checkIsOut": false, "checkIsColliding": false}
+{"intervalMilliseconds": 120, "cellNum": 20, "checkIsOut": false, "checkIsColliding": false}

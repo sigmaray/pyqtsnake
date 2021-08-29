@@ -1,5 +1,4 @@
 from munch import Munch
-# SETTINGS_STORAGE_KEY = "JSSnakeSettings";
 
 CELL_TYPES = Munch()
 CELL_TYPES.empty = "empty"
@@ -10,11 +9,7 @@ CELL_TYPES.snakeHead = "snakeHead"
 COLORS = Munch()
 COLORS.snakeSegment = "Olive"
 COLORS.snakeHead = "Green"
-# COLORS.segmentBorder = "SlateBlue"
-# COLORS.food = "#DDA0DD"
 COLORS.food = "red"
-COLORS.text = "SlateBlue"
-COLORS.canvasColor = "#fff"
 
 DEFAULT_SETTINGS = {
     "cellNum": 15,

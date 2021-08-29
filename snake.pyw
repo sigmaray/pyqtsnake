@@ -1,12 +1,3 @@
-# from PyQt5.QtWidgets import (
-#     QApplication,
-#     QPushButton,
-#     QVBoxLayout,
-#     QHBoxLayout,
-#     QWidget,
-#     QCheckBox
-# )
-
 from copy import deepcopy
 import sys
 from PyQt5 import *
@@ -22,7 +13,7 @@ class Window(QWidget):
     # https://stackoverflow.com/a/34372471
     EXIT_CODE_REBOOT = -123
 
-    # Add some content to prevent moving of form elements
+    # Add some content to prevent form elements moving
     LABEL_PLACEHOLDER = " "
 
     def generateState(self):
@@ -60,7 +51,6 @@ class Window(QWidget):
     def togglePause(self):
         if not self.state.isPaused:
             self.state.isPaused = True
-            # clearInterval(interval);
             self.timer.stop()
             self.labelStatus.setText("paused")
         else:
@@ -69,12 +59,10 @@ class Window(QWidget):
             self.labelStatus.setText(self.LABEL_PLACEHOLDER)
 
     def endGame(self, message="game is over"):
-        # print(message)
         self.labelStatus.setText(message)
         self.timer.stop()
-        # sys.exit()
 
-    def game_loop(self):
+    def gameLoop(self):
         ateFood = isEating(self.state.snakeSegments, self.state.food)
 
         head = self.state.snakeSegments[-1]
@@ -177,27 +165,11 @@ class Window(QWidget):
         settings, result = SettingsDialog.run(self.settings)
         if (result):
             writeSettingsFile(settings)
-            # self.settings = settings
-            # self.restart
             QApplication.exit(Window.EXIT_CODE_REBOOT)
         else:
             self.unpause()
 
-    def add_toolbar(self):
-        # Create pyqt toolbar
-
-        # # Add buttons to toolbar
-        # toolButton = QToolButton()
-        # toolButton.setText("Apple")
-        # toolButton.setCheckable(True)
-        # # toolButton.setAutoExclusive(True)
-        # toolBar.addWidget(toolButton)
-        # toolButton = QToolButton()
-        # toolButton.setText("Orange")
-        # toolButton.setCheckable(True)
-        # # toolButton.setAutoExclusive(True)
-        # toolBar.addWidget(toolButton)
-
+    def addToolbar(self):
         self.toolBar = QToolBar()
         self.layout.addWidget(self.toolBar)
 
@@ -245,33 +217,31 @@ class Window(QWidget):
 
         self.state = self.generateState()
 
-        self.add_toolbar()
+        self.addToolbar()
 
         self.checkboxes = []
         for _ in range(self.settings.cellNum):
             row = []
-            # vl = QVBoxLayout()
+
             hl = QHBoxLayout()
 
             for _ in range(self.settings.cellNum):
                 c = QCheckBox()
                 c.setEnabled(False)
-                c.setStyleSheet(genStyleSheet(COLORS.canvasColor))
                 hl.addWidget(c)
                 row.append(c)
 
             self.checkboxes.append(row)
             self.layout.addLayout(hl)
 
-        # Set the layout on the application's window
         self.setLayout(self.layout)
 
         self.timer = QtCore.QTimer(self)
-        self.timer.timeout.connect(self.game_loop)
+        self.timer.timeout.connect(self.gameLoop)
         self.timer.start(self.settings.intervalMilliseconds)
 
     def keyPressEvent(self, event):
-        allowed_keys = [
+        allowedKeys = [
             QtCore.Qt.Key_Up,
             QtCore.Qt.Key_Down,
             QtCore.Qt.Key_Left,
@@ -279,14 +249,10 @@ class Window(QWidget):
             QtCore.Qt.Key_P,
             1047  # "p" in russian layout
         ]
-        # if event.key() == QtCore.Qt.Key_Q:
-        #     print "Killing"
-        #     self.deleteLater()
-        # elif event.key() == QtCore.Qt.Key_Enter:
-        #     self.proceed()
+
         k = event.key()
 
-        if k in allowed_keys:
+        if k in allowedKeys:
             if event.key() == QtCore.Qt.Key_P or event.key() == 1047:
                 self.togglePause()
             else:
@@ -325,10 +291,10 @@ class Window(QWidget):
 
         # else:
         #     event.accept()
-        # print(event.key())
 
 
 if __name__ == "__main__":
+    # App should restart after settings were changed
     while True:
         app = QApplication(sys.argv)
         window = Window()
