@@ -117,7 +117,7 @@ class Window(QWidget):
         self.state.switchingDirection = False
 
     def determineDelta(self, intervalMilliseconds, direction = ["up", "down"][0]):
-        if intervalMilliseconds <= 150 and intervalMilliseconds >= 20:
+        if intervalMilliseconds <= 250 and intervalMilliseconds >= 20:
             delta = 10
         elif intervalMilliseconds < 20 and intervalMilliseconds > 10:
             if direction == "down":
