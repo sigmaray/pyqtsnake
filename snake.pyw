@@ -9,6 +9,7 @@ from lib import *
 from settings_dialog import SettingsDialog
 from munch import munchify
 
+
 class Window(QWidget):
     # https://stackoverflow.com/a/34372471
     EXIT_CODE_REBOOT = -123
@@ -39,9 +40,9 @@ class Window(QWidget):
         self.timer.start(self.settings.intervalMilliseconds)
 
     def pause(self):
-            self.state.isPaused = True
-            self.timer.stop()
-            self.labelStatus.setText("paused")
+        self.state.isPaused = True
+        self.timer.stop()
+        self.labelStatus.setText("paused")
 
     def unpause(self):
         self.state.isPaused = False
@@ -63,6 +64,9 @@ class Window(QWidget):
         self.timer.stop()
 
     def gameLoop(self):
+        self.makeMove()
+
+    def makeMove(self):
         ateFood = isEating(self.state.snakeSegments, self.state.food)
 
         head = self.state.snakeSegments[-1]
@@ -116,7 +120,7 @@ class Window(QWidget):
 
         self.state.switchingDirection = False
 
-    def determineDelta(self, intervalMilliseconds, direction = ["up", "down"][0]):
+    def determineDelta(self, intervalMilliseconds, direction=["up", "down"][0]):
         if intervalMilliseconds <= 250 and intervalMilliseconds >= 20:
             delta = 10
         elif intervalMilliseconds < 20 and intervalMilliseconds > 10:
@@ -140,8 +144,9 @@ class Window(QWidget):
             delta = 50
         return delta
 
-    def decreaseInterval(self):        
-        self.settings.intervalMilliseconds -= self.determineDelta(self.settings.intervalMilliseconds, "down")
+    def decreaseInterval(self):
+        self.settings.intervalMilliseconds -= self.determineDelta(
+            self.settings.intervalMilliseconds, "down")
 
         writeSettingsFile(self.settings)
 
@@ -151,7 +156,8 @@ class Window(QWidget):
         self.timer.start(self.settings.intervalMilliseconds)
 
     def increaseInterval(self):
-        self.settings.intervalMilliseconds += self.determineDelta(self.settings.intervalMilliseconds, "up")
+        self.settings.intervalMilliseconds += self.determineDelta(
+            self.settings.intervalMilliseconds, "up")
 
         writeSettingsFile(self.settings)
 
@@ -262,38 +268,41 @@ class Window(QWidget):
             elif event.key() == QtCore.Qt.Key_PageDown:
                 self.decreaseInterval()
             else:
+                toSpeedUp = False
                 if not self.state.switchingDirection and not self.state.isPaused:
                     if k == QtCore.Qt.Key_Up:
-                        if (
-                            self.state.snakeDirection != "up" and
-                            self.state.snakeDirection != "down"
-                        ):
+                        if self.state.snakeDirection == "up":
+                            toSpeedUp = True
+                        elif self.state.snakeDirection != "down":
                             self.state.snakeDirection = "up"
                             self.state.switchingDirection = True
 
                     elif k == QtCore.Qt.Key_Down:
-                        if (
-                            self.state.snakeDirection != "up" and
-                            self.state.snakeDirection != "down"
-                        ):
+                        if self.state.snakeDirection == "down":
+                            toSpeedUp = True
+                        elif self.state.snakeDirection != "up":
                             self.state.snakeDirection = "down"
                             self.state.switchingDirection = True
 
                     elif k == QtCore.Qt.Key_Left:
-                        if (
-                            self.state.snakeDirection != "right" and
-                            self.state.snakeDirection != "left"
-                        ):
+                        if self.state.snakeDirection == "left":
+                            toSpeedUp = True
+                        elif self.state.snakeDirection != "right":
                             self.state.snakeDirection = "left"
                             self.state.switchingDirection = True
 
                     elif k == QtCore.Qt.Key_Right:
-                        if (
-                            self.state.snakeDirection != "right" and
-                            self.state.snakeDirection != "left"
-                        ):
+                        if self.state.snakeDirection == "right":
+                            toSpeedUp = True
+                        elif self.state.snakeDirection != "left":
                             self.state.snakeDirection = "right"
                             self.state.switchingDirection = True
+
+                    if toSpeedUp:
+                        print('makeMove')
+                        self.makeMove()
+                    else:
+                        print('not makeMove')
 
         # else:
         #     event.accept()
