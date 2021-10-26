@@ -299,10 +299,7 @@ class Window(QWidget):
                             self.state.switchingDirection = True
 
                     if toSpeedUp:
-                        print('makeMove')
                         self.makeMove()
-                    else:
-                        print('not makeMove')
 
         # else:
         #     event.accept()
