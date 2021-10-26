@@ -10,7 +10,7 @@ from settings_dialog import SettingsDialog
 from munch import munchify
 
 
-class Window(QWidget):
+class SnakeCheckboxes(QWidget):
     # https://stackoverflow.com/a/34372471
     EXIT_CODE_REBOOT = -123
 
@@ -116,7 +116,7 @@ class Window(QWidget):
         matrix = snakeAndFoodToMatrix(self.state.snakeSegments,
                                       self.settings.cellNum, self.state.food)
 
-        matrixToCheckboxes(matrix, self.checkboxes)
+        self.render(matrix)
 
         self.state.switchingDirection = False
 
@@ -225,6 +225,18 @@ class Window(QWidget):
 
         self.addToolbar()
 
+        self.addBoard()
+
+        self.setLayout(self.layout)
+
+        self.timer = QtCore.QTimer(self)
+        self.timer.timeout.connect(self.gameLoop)
+        self.timer.start(self.settings.intervalMilliseconds)
+
+    def render(self, matrix):
+        matrixToCheckboxes(matrix, self.checkboxes)
+
+    def addBoard(self):
         self.checkboxes = []
         for _ in range(self.settings.cellNum):
             row = []
@@ -239,12 +251,6 @@ class Window(QWidget):
 
             self.checkboxes.append(row)
             self.layout.addLayout(hl)
-
-        self.setLayout(self.layout)
-
-        self.timer = QtCore.QTimer(self)
-        self.timer.timeout.connect(self.gameLoop)
-        self.timer.start(self.settings.intervalMilliseconds)
 
     def keyPressEvent(self, event):
         allowedKeys = [
@@ -299,24 +305,25 @@ class Window(QWidget):
                             self.state.switchingDirection = True
 
                     if toSpeedUp:
-                        print('makeMove')
                         self.makeMove()
-                    else:
-                        print('not makeMove')
 
         # else:
         #     event.accept()
 
+    @staticmethod
+    def launch(klass):
+        # App should restart after settings were changed
+        while True:
+            app = QApplication(sys.argv)
+            # window = SnakeCheckboxes()
+            window = klass()
+            window.show()
+            currentExitCode = app.exec_()
+            app = None  # delete the QApplication object
+            if currentExitCode != SnakeCheckboxes.EXIT_CODE_REBOOT:
+                break
+
+        sys.exit(currentExitCode)
 
 if __name__ == "__main__":
-    # App should restart after settings were changed
-    while True:
-        app = QApplication(sys.argv)
-        window = Window()
-        window.show()
-        currentExitCode = app.exec_()
-        app = None  # delete the QApplication object
-        if currentExitCode != Window.EXIT_CODE_REBOOT:
-            break
-
-    sys.exit(currentExitCode)
+    SnakeCheckboxes.launch(SnakeCheckboxes)
