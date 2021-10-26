@@ -247,7 +247,9 @@ class Window(QWidget):
             QtCore.Qt.Key_Left,
             QtCore.Qt.Key_Right,
             QtCore.Qt.Key_P,
-            1047  # "p" in russian layout
+            1047,  # "p" in russian layout
+            QtCore.Qt.Key_PageUp,
+            QtCore.Qt.Key_PageDown
         ]
 
         k = event.key()
@@ -255,6 +257,10 @@ class Window(QWidget):
         if k in allowedKeys:
             if event.key() == QtCore.Qt.Key_P or event.key() == 1047:
                 self.togglePause()
+            elif event.key() == QtCore.Qt.Key_PageUp:
+                self.increaseInterval()
+            elif event.key() == QtCore.Qt.Key_PageDown:
+                self.decreaseInterval()
             else:
                 if not self.state.switchingDirection and not self.state.isPaused:
                     if k == QtCore.Qt.Key_Up:
