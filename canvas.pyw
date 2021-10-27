@@ -3,14 +3,19 @@ from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from PyQt5.QtCore import Qt
 
 
-class MainWindow(QtWidgets.QMainWindow):
+class MainWindow(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
 
+        self.layout = QtWidgets.QVBoxLayout()
+        self.setLayout(self.layout)
+
         self.label = QtWidgets.QLabel()
+        self.label.setFixedSize(400, 300)
+        self.layout.addWidget(self.label)
         canvas = QtGui.QPixmap(400, 300)
         self.label.setPixmap(canvas)
-        self.setCentralWidget(self.label)
+        # self.setCentralWidget(self.label)
         self.draw_something()
 
     # def draw_something(self):
