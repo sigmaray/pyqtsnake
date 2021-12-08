@@ -23,6 +23,8 @@ class MainWindow(QtWidgets.QWidget):
         self.painter = QtGui.QPainter(self.label.pixmap())
         self.drawRectangle(self.painter, 0, 0, 20, 20)
 
+        self.drawRectangle(self.painter, 20, 20, 20, 20)
+
     # def draw_something(self):
     #     painter = QtGui.QPainter(self.label.pixmap())
     #     painter.drawLine(10, 10, 300, 200)
@@ -47,7 +49,7 @@ class MainWindow(QtWidgets.QWidget):
             QtCore.QPoint(100, 100),
             QtCore.QPoint(300, 200)
         )
-        painter.end()
+        # painter.end()
 
     def drawRectangle(self,
                       painter,
@@ -75,7 +77,7 @@ class MainWindow(QtWidgets.QWidget):
         painter.setBrush(QBrush(QtGui.QColor(color), Qt.SolidPattern))
         painter.drawRect(x, y, w, h)
 
-        painter.end()
+        # painter.end()
 
     # const drawRectangle = (
     #     ctx,

@@ -240,6 +240,15 @@ class Window(QWidget):
         #     self.checkboxes.append(row)
         #     self.layout.addLayout(hl)
 
+        self.addCanvasLabel()
+
+        self.setLayout(self.layout)
+
+        self.timer = QtCore.QTimer(self)
+        self.timer.timeout.connect(self.gameLoop)
+        # self.timer.start(self.settings.intervalMilliseconds)
+
+    def addCanvasLabel(self):
         self.CELL_SIZE = 20
         boardSize = self.CELL_SIZE * self.settings.cellNum
 
@@ -249,12 +258,6 @@ class Window(QWidget):
         canvas = QtGui.QPixmap(boardSize, boardSize)
         self.label.setPixmap(canvas)
         self.layout.addWidget(self.label)
-
-        self.setLayout(self.layout)
-
-        self.timer = QtCore.QTimer(self)
-        self.timer.timeout.connect(self.gameLoop)
-        # self.timer.start(self.settings.intervalMilliseconds)
 
     def keyPressEvent(self, event):
         allowedKeys = [
