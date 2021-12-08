@@ -1,7 +1,7 @@
 from copy import deepcopy
 import sys
 from PyQt5 import *
-from PyQt5 import QtCore
+from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import *
 
 from constants import *
@@ -225,26 +225,36 @@ class Window(QWidget):
 
         self.addToolbar()
 
-        self.checkboxes = []
-        for _ in range(self.settings.cellNum):
-            row = []
+        # self.checkboxes = []
+        # for _ in range(self.settings.cellNum):
+        #     row = []
 
-            hl = QHBoxLayout()
+        #     hl = QHBoxLayout()
 
-            for _ in range(self.settings.cellNum):
-                c = QCheckBox()
-                c.setEnabled(False)
-                hl.addWidget(c)
-                row.append(c)
+        #     for _ in range(self.settings.cellNum):
+        #         c = QCheckBox()
+        #         c.setEnabled(False)
+        #         hl.addWidget(c)
+        #         row.append(c)
 
-            self.checkboxes.append(row)
-            self.layout.addLayout(hl)
+        #     self.checkboxes.append(row)
+        #     self.layout.addLayout(hl)
+
+        self.CELL_SIZE = 20
+        boardSize = self.CELL_SIZE * self.settings.cellNum
+
+        self.label = QLabel()
+        self.label.setFixedSize(boardSize, boardSize)
+        self.layout.addWidget(self.label)
+        canvas = QtGui.QPixmap(boardSize, boardSize)
+        self.label.setPixmap(canvas)
+        self.layout.addWidget(self.label)
 
         self.setLayout(self.layout)
 
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.gameLoop)
-        self.timer.start(self.settings.intervalMilliseconds)
+        # self.timer.start(self.settings.intervalMilliseconds)
 
     def keyPressEvent(self, event):
         allowedKeys = [
