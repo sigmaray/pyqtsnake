@@ -117,8 +117,9 @@ class Window(QWidget):
         matrix = snakeAndFoodToMatrix(self.state.snakeSegments,
                                       self.settings.cellNum, self.state.food)
 
-        matrixToCheckboxes(matrix, self.checkboxes)
+        # matrixToCheckboxes(matrix, self.checkboxes)
         matrixToCanvas(matrix, self.painter)
+        self.update()
 
         self.state.switchingDirection = False
 
@@ -227,20 +228,20 @@ class Window(QWidget):
 
         self.addToolbar()
 
-        self.checkboxes = []
-        for _ in range(self.settings.cellNum):
-            row = []
+        # self.checkboxes = []
+        # for _ in range(self.settings.cellNum):
+        #     row = []
 
-            hl = QHBoxLayout()
+        #     hl = QHBoxLayout()
 
-            for _ in range(self.settings.cellNum):
-                c = QCheckBox()
-                c.setEnabled(False)
-                hl.addWidget(c)
-                row.append(c)
+        #     for _ in range(self.settings.cellNum):
+        #         c = QCheckBox()
+        #         c.setEnabled(False)
+        #         hl.addWidget(c)
+        #         row.append(c)
 
-            self.checkboxes.append(row)
-            self.layout.addLayout(hl)
+        #     self.checkboxes.append(row)
+        #     self.layout.addLayout(hl)
 
         self.addCanvasLabel()
 
@@ -255,12 +256,11 @@ class Window(QWidget):
         boardSize = self.CELL_SIZE * self.settings.cellNum
 
         self.label = QLabel()
-        self.label.setFixedSize(boardSize, boardSize)
+        # self.label.setFixedSize(boardSize, boardSize)
         self.layout.addWidget(self.label)
         canvas = QtGui.QPixmap(boardSize, boardSize)
         self.label.setPixmap(canvas)
         self.painter = QtGui.QPainter(self.label.pixmap())
-        self.layout.addWidget(self.label)
 
     def keyPressEvent(self, event):
         allowedKeys = [
