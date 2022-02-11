@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import *
 
 from constants import *
 from lib import *
+from libg import *
 from settings_dialog import SettingsDialog
 from munch import munchify
 
@@ -117,6 +118,7 @@ class Window(QWidget):
                                       self.settings.cellNum, self.state.food)
 
         matrixToCheckboxes(matrix, self.checkboxes)
+        matrixToCanvas(matrix, self.painter)
 
         self.state.switchingDirection = False
 
@@ -225,20 +227,20 @@ class Window(QWidget):
 
         self.addToolbar()
 
-        # self.checkboxes = []
-        # for _ in range(self.settings.cellNum):
-        #     row = []
+        self.checkboxes = []
+        for _ in range(self.settings.cellNum):
+            row = []
 
-        #     hl = QHBoxLayout()
+            hl = QHBoxLayout()
 
-        #     for _ in range(self.settings.cellNum):
-        #         c = QCheckBox()
-        #         c.setEnabled(False)
-        #         hl.addWidget(c)
-        #         row.append(c)
+            for _ in range(self.settings.cellNum):
+                c = QCheckBox()
+                c.setEnabled(False)
+                hl.addWidget(c)
+                row.append(c)
 
-        #     self.checkboxes.append(row)
-        #     self.layout.addLayout(hl)
+            self.checkboxes.append(row)
+            self.layout.addLayout(hl)
 
         self.addCanvasLabel()
 
@@ -246,7 +248,7 @@ class Window(QWidget):
 
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.gameLoop)
-        # self.timer.start(self.settings.intervalMilliseconds)
+        self.timer.start(self.settings.intervalMilliseconds)
 
     def addCanvasLabel(self):
         self.CELL_SIZE = 20
@@ -257,6 +259,7 @@ class Window(QWidget):
         self.layout.addWidget(self.label)
         canvas = QtGui.QPixmap(boardSize, boardSize)
         self.label.setPixmap(canvas)
+        self.painter = QtGui.QPainter(self.label.pixmap())
         self.layout.addWidget(self.label)
 
     def keyPressEvent(self, event):
