@@ -18,6 +18,8 @@ class Window(QWidget):
     # Add some content to prevent form elements moving
     LABEL_PLACEHOLDER = " "
 
+    CELL_SIZE = 20
+
     def generateState(self):
         snakeSegments = [
             {"x": 0, "y": 0},
@@ -118,7 +120,7 @@ class Window(QWidget):
                                       self.settings.cellNum, self.state.food)
 
         # matrixToCheckboxes(matrix, self.checkboxes)
-        matrixToCanvas(matrix, self.painter)
+        matrixToCanvas(matrix, self.CELL_SIZE, self.painter)
         self.update()
 
         self.state.switchingDirection = False
@@ -252,7 +254,6 @@ class Window(QWidget):
         self.timer.start(self.settings.intervalMilliseconds)
 
     def addCanvasLabel(self):
-        self.CELL_SIZE = 20
         boardSize = self.CELL_SIZE * self.settings.cellNum
 
         self.label = QLabel()

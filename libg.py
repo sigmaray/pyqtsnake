@@ -1,10 +1,8 @@
 from PyQt5.QtGui import QPainter, QBrush, QPen, QColor
-# import PyQt5.Qt
 from PyQt5.QtCore import Qt
 from constants import CELL_TYPES
-CELL_SIZE = 20
 
-def matrixToCanvas(matrix, painter):
+def matrixToCanvas(matrix, CELL_SIZE, painter):
     for y, row in enumerate(matrix):
         for x, value in enumerate(row):
             if value == CELL_TYPES.empty:
@@ -60,7 +58,7 @@ def drawEmpty(
         x,
         y,
         w,
-        h, 'pink')
+        h, '#ccc')
 
 def drawSnakeSegment(
         painter,
