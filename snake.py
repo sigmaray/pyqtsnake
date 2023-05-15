@@ -171,7 +171,10 @@ class SnakeCheckboxes(QWidget):
         settings, result = SettingsDialog.run(self.settings)
         if (result):
             writeSettingsFile(settings)
-            QApplication.exit(SnakeCheckboxes.EXIT_CODE_REBOOT)
+
+            # https://stackoverflow.com/a/62611055
+            QtCore.QCoreApplication.quit()
+            QtCore.QProcess.startDetached(sys.executable, sys.argv)
         else:
             self.unpause()
 
@@ -312,18 +315,10 @@ class SnakeCheckboxes(QWidget):
 
     @staticmethod
     def launch(klass):
-        # App should restart after settings were changed
-        while True:
-            app = QApplication(sys.argv)
-            # window = SnakeCheckboxes()
-            window = klass()
-            window.show()
-            currentExitCode = app.exec_()
-            app = None  # delete the QApplication object
-            if currentExitCode != SnakeCheckboxes.EXIT_CODE_REBOOT:
-                break
-
-        sys.exit(currentExitCode)
+        app = QApplication(sys.argv)
+        window = klass()
+        window.show()
+        sys.exit(app.exec_())
 
 if __name__ == "__main__":
     SnakeCheckboxes.launch(SnakeCheckboxes)
