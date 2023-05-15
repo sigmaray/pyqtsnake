@@ -171,7 +171,7 @@ class SnakeCheckboxes(QWidget):
         settings, result = SettingsDialog.run(self.settings)
         if (result):
             writeSettingsFile(settings)
-            QApplication.exit(Window.EXIT_CODE_REBOOT)
+            QApplication.exit(SnakeCheckboxes.EXIT_CODE_REBOOT)
         else:
             self.unpause()
 
