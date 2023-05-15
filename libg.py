@@ -1,138 +1,124 @@
 """Helper functions for graphical Snake"""
-from PyQt5.QtGui import QBrush, QPen, QColor
+from PyQt5.QtGui import QBrush, QPen, QColor, QPainter
 from PyQt5.QtCore import Qt
-from constants import CELL_TYPES
+import type_declarations as t
+import constants
 
 
-def matrixToCanvas(matrix, CELL_SIZE, painter):
+def matrixToCanvas(matrix, cellSize: int, painter: QPainter):
+    """Paint 2d array on canvas"""
     for y, row in enumerate(matrix):
         for x, value in enumerate(row):
-            if value == CELL_TYPES.empty:
-                drawEmpty(painter, x * CELL_SIZE, y *
-                          CELL_SIZE, CELL_SIZE, CELL_SIZE)
+            if value == t.CellTypes.empty:
+                drawEmpty(painter, x * cellSize, y *
+                          cellSize, cellSize, cellSize)
             else:
-                if value == CELL_TYPES.snakeSegment:
-                    drawSnakeSegment(painter, x * CELL_SIZE,
-                                     y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-                elif value == CELL_TYPES.snakeHead:
-                    drawSnakeHead(painter, x * CELL_SIZE, y *
-                                  CELL_SIZE, CELL_SIZE, CELL_SIZE)
-                elif value == CELL_TYPES.food:
-                    drawFood(painter, x * CELL_SIZE, y *
-                             CELL_SIZE, CELL_SIZE, CELL_SIZE)
+                if value == t.CellTypes.snakeSegment:
+                    drawSnakeSegment(painter, x * cellSize,
+                                     y * cellSize, cellSize, cellSize)
+                elif value == t.CellTypes.snakeHead:
+                    drawSnakeHead(painter, x * cellSize, y *
+                                  cellSize, cellSize, cellSize)
+                elif value == t.CellTypes.food:
+                    drawFood(painter, x * cellSize, y *
+                             cellSize, cellSize, cellSize)
 
 
 def drawRectangle(
-        painter,
-        x,
-        y,
-        w,
-        h,
-        color="#ccc",
-        borderColor="SlateBlue",
-        border=None,
-        margin=None):
-    if border is None:
-        border = w * 0.05
-    if margin is None:
-        margin = w * 0.1
-
+        painter: QPainter,
+        x: int,
+        y: int,
+        width: int,
+        height: int,
+        color: str = "#ccc",
+        borderColor: str = constants.CANVAS_COLORS.border):
+    """Draw board cell on canvas"""
     pen = QPen()
     # pen.setWidth(1)
     pen.setColor(QColor(borderColor))
     painter.setPen(pen)
-    # painter.drawLine(
-    #     QtCore.QPoint(100, 100),
-    #     QtCore.QPoint(300, 200)
-    # )
     painter.setBrush(QBrush(QColor(color), Qt.SolidPattern))
-
-    painter.drawRect(x, y, w - 1, h - 1)
+    painter.drawRect(x, y, width - 1, height - 1)
 
 
 def drawEmpty(
-        painter,
-        x,
-        y,
-        w,
-        h,
-        color="#ccc",
-        borderColor="SlateBlue",
-        border=None,
-        margin=None):
+        painter: QPainter,
+        x: int,
+        y: int,
+        width: int,
+        height: int,
+        backgroundColor: str = constants.CANVAS_COLORS.emptyBackground,
+        borderColor: str = constants.CANVAS_COLORS.border
+):
+    """Draw empty cell on canval (without snake or food)"""
     drawRectangle(
         painter,
         x,
         y,
-        w,
-        h,
-        color,
-        borderColor,
-        border,
-        margin)
+        width,
+        height,
+        backgroundColor,
+        borderColor
+    )
 
 
 def drawSnakeSegment(
-        painter,
-        x,
-        y,
-        w,
-        h,
-        color="blue",
-        borderColor="SlateBlue",
-        border=None,
-        margin=None):
+        painter: QPainter,
+        x: int,
+        y: int,
+        widht: int,
+        height: int,
+        backgroundColor: str = constants.CANVAS_COLORS.snakeSegmentBackground,
+        borderColor: str = constants.CANVAS_COLORS.border
+):
+    """Draw snake body"""
     drawRectangle(
         painter,
         x,
         y,
-        w,
-        h,
-        color,
+        widht,
+        height,
+        backgroundColor,
         borderColor,
-        border,
-        margin)
+    )
 
 
 def drawSnakeHead(
-        painter,
-        x,
-        y,
-        w,
-        h,
-        color="blue",
-        borderColor="SlateBlue",
-        border=None,
-        margin=None):
+        painter: QPainter,
+        x: int,
+        y: int,
+        width: int,
+        height: int,
+        backgroundColor: str = constants.CANVAS_COLORS.snakeHeadBackground,
+        borderColor: str = constants.CANVAS_COLORS.border
+):
+    """Draw snake head (head can have different color)"""
     drawRectangle(
         painter,
         x,
         y,
-        w,
-        h,
-        color,
-        borderColor,
-        border,
-        margin)
+        width,
+        height,
+        backgroundColor,
+        borderColor
+    )
 
 
 def drawFood(
-        painter,
-        x,
-        y,
-        w,
-        h,
-        color="red",
-        borderColor="SlateBlue",
-        border=None,
-        margin=None):
+        painter: QPainter,
+        x: int,
+        y: int,
+        width: int,
+        height: int,
+        backgroundColor: str = constants.CANVAS_COLORS.foodBackground,
+        borderColor: str = constants.CANVAS_COLORS.border):
+    """Draw food"""
     drawRectangle(
         painter,
         x,
         y,
-        w,
-        h,
-        color,
-        borderColor,
-        border,
-        margin)
+        width,
+        height,
+        backgroundColor,
+        borderColor
+    )
