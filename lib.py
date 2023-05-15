@@ -85,6 +85,7 @@ def generateFoodPosition(snakeSegments: List[t.Coordinate], cellNum: int):
         return None
     return random.choice(availableCells)
 
+
 def doSettingsExist() -> bool:
     """Check if settings.json file exists"""
     return os.path.isfile(c.SETTINGS_FILE)
@@ -107,14 +108,14 @@ def validateSettings(settings: t.Settings) -> bool:
     keys = [field.name for field in dataclasses.fields(t.Settings)]
 
     for key in ["checkIsOut", "checkIsColliding"]:
-        if not(key in keys) or not isinstance(getattr(settings, key), bool):
+        if key not in keys or not isinstance(getattr(settings, key), bool):
             return False
 
     for key in ["cellNum", "intervalMilliseconds"]:
         if (
-            not(key in keys) or
-            not isinstance(getattr(settings, key), int)
-            or (getattr(settings, key) < 0)
+            key not in keys or
+            not isinstance(getattr(settings, key), int) or
+            getattr(settings, key) < 0
         ):
             return False
 
@@ -122,6 +123,7 @@ def validateSettings(settings: t.Settings) -> bool:
         return False
 
     return True
+
 
 def readOrCreateSettings() -> t.Settings:
     """Read settings.json. If it doesn't exist, create it and fill it with default values"""

@@ -31,6 +31,7 @@ class SnakeCanvas(SnakeCheckboxes):
         libg.matrixToCanvas(matrix, self.CELL_SIZE, self.widgets.painter)
         self.update()
 
+
 if __name__ == "__main__":
     # Launch snake with canvas instead of checkboxes
     SnakeCanvas.launch(SnakeCanvas)

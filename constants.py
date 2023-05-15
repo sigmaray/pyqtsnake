@@ -12,6 +12,7 @@ class CHECKBOX_COLORS(str, Enum):
     def __str__(self) -> str:
         return str.__str__(self)
 
+
 class CANVAS_COLORS(str, Enum):
     emptyBackground = "#ccc"
     snakeSegmentBackground = "green"

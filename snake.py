@@ -2,8 +2,8 @@
 from copy import deepcopy
 import sys
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import(QWidget, QApplication, QVBoxLayout, QToolBar, QAction,
-                            QLabel, QHBoxLayout, QCheckBox)
+from PyQt5.QtWidgets import (QWidget, QApplication, QVBoxLayout, QToolBar, QAction,
+                             QLabel, QHBoxLayout, QCheckBox)
 from munch import Munch
 from settings_dialog import SettingsDialog
 import lib
@@ -106,7 +106,7 @@ class SnakeCheckboxes(QWidget):
     def makeMove(self):
         """
         When timer is called or when user presses same button a few times:
-        * Move snake by one cell        
+        * Move snake by one cell
         * Check if game is over
         * Check if food is eaten (generate new random food and increase snake lenght)
         * Call renderer

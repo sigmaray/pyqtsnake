@@ -10,6 +10,7 @@ class Coordinate:
     x: int
     y: int
 
+
 @dataclass
 class State:
     snakeDirection: str
@@ -17,6 +18,7 @@ class State:
     snakeSegments: List[Coordinate]
     food: Coordinate
     switchingDirection: bool
+
 
 class CellTypes(str, Enum):
     empty = 'empty'
@@ -26,6 +28,7 @@ class CellTypes(str, Enum):
 
     def __str__(self) -> str:
         return str.__str__(self)
+
 
 @dataclass
 class Settings:
