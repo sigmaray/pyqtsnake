@@ -1,4 +1,5 @@
-from PyQt5.QtGui import QPainter, QBrush, QPen, QColor
+"""Helper functions for graphical Snake"""
+from PyQt5.QtGui import QBrush, QPen, QColor
 from PyQt5.QtCore import Qt
 from constants import CELL_TYPES
 
@@ -31,9 +32,9 @@ def drawRectangle(
         borderColor="SlateBlue",
         border=None,
         margin=None):
-    if (border == None):
+    if border is None:
         border = w * 0.05
-    if (margin == None):
+    if margin is None:
         margin = w * 0.1
 
     pen = QPen()
@@ -64,7 +65,11 @@ def drawEmpty(
         x,
         y,
         w,
-        h, '#ccc')
+        h,
+        color,
+        borderColor,
+        border,
+        margin)
 
 
 def drawSnakeSegment(
@@ -73,7 +78,7 @@ def drawSnakeSegment(
         y,
         w,
         h,
-        color="#ccc",
+        color="blue",
         borderColor="SlateBlue",
         border=None,
         margin=None):
@@ -82,7 +87,11 @@ def drawSnakeSegment(
         x,
         y,
         w,
-        h, 'blue')
+        h,
+        color,
+        borderColor,
+        border,
+        margin)
 
 
 def drawSnakeHead(
@@ -91,7 +100,7 @@ def drawSnakeHead(
         y,
         w,
         h,
-        color="#ccc",
+        color="blue",
         borderColor="SlateBlue",
         border=None,
         margin=None):
@@ -100,7 +109,11 @@ def drawSnakeHead(
         x,
         y,
         w,
-        h, 'yellow')
+        h,
+        color,
+        borderColor,
+        border,
+        margin)
 
 
 def drawFood(
@@ -109,7 +122,7 @@ def drawFood(
         y,
         w,
         h,
-        color="#ccc",
+        color="red",
         borderColor="SlateBlue",
         border=None,
         margin=None):
@@ -118,4 +131,8 @@ def drawFood(
         x,
         y,
         w,
-        h, 'red')
+        h,
+        color,
+        borderColor,
+        border,
+        margin)

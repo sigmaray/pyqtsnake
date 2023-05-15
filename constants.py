@@ -1,3 +1,4 @@
+"""Constants and enums used in Snake"""
 from munch import Munch
 
 CELL_TYPES = Munch()
@@ -19,4 +20,3 @@ DEFAULT_SETTINGS = {
 }
 
 SETTINGS_FILE = "settings.json"
-

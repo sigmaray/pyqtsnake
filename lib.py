@@ -1,9 +1,10 @@
-from munch import munchify
-from constants import *
+"""Helper functions"""
 import random
 import os
 import json
 import sys
+from munch import munchify
+import constants
 
 
 def deep_copy(o):
@@ -12,7 +13,7 @@ def deep_copy(o):
 
 def gen_default_matrix(cellNum):
     matrix = [
-        [CELL_TYPES.empty] * cellNum
+        [constants.CELL_TYPES.empty] * cellNum
     ] * cellNum
     return deep_copy(matrix)
 
@@ -22,14 +23,14 @@ def snakeAndFoodToMatrix(snakeSegments, cellNum, food=None):
 
     for i, segment in enumerate(snakeSegments):
         if i == len(snakeSegments) - 1:
-            type = CELL_TYPES.snakeHead
+            cellType = constants.CELL_TYPES.snakeHead
         else:
-            type = CELL_TYPES.snakeSegment
+            cellType = constants.CELL_TYPES.snakeSegment
 
-        matrix[segment["y"]][segment["x"]] = type
+        matrix[segment["y"]][segment["x"]] = cellType
 
     if food:
-        matrix[food["y"]][food["x"]] = CELL_TYPES.food
+        matrix[food["y"]][food["x"]] = constants.CELL_TYPES.food
 
     return matrix
 
@@ -60,14 +61,14 @@ def isColliding(snakeSegments):
     return False
 
 
-def generateFoodPosition(snakeSegments, cellNum, food=None):
+def generateFoodPosition(snakeSegments, cellNum):
     matrix = snakeAndFoodToMatrix(snakeSegments, cellNum)
     availableCells = []
 #   matrix.forEach((row, y)= > {
     for y, row in enumerate(matrix):
         # row.forEach((value, x)= > {
         for x, value in enumerate(row):
-            if value == CELL_TYPES.empty:
+            if value == constants.CELL_TYPES.empty:
                 availableCells.append({
                     "x": x,
                     "y": y
@@ -81,27 +82,27 @@ def generateFoodPosition(snakeSegments, cellNum, food=None):
 
 
 def doSettingsExist():
-    return os.path.isfile(SETTINGS_FILE)
+    return os.path.isfile(constants.SETTINGS_FILE)
 
 
 def writeSettingsFile(hashmap):
-    with open(SETTINGS_FILE, 'w') as f:
+    with open(constants.SETTINGS_FILE, 'w', encoding="utf-8") as f:
         f.write(json.dumps(hashmap))
 
 
 def readSettingsFile():
-    with open(SETTINGS_FILE) as f:
+    with open(constants.SETTINGS_FILE, encoding="utf-8") as f:
         return json.load(f)
 
 
 def validateSettings(settings):
 
     for key in ["checkIsOut", "checkIsColliding"]:
-        if not(key in settings.keys()) or (type(settings[key]) != bool):
+        if not(key in settings.keys()) or not isinstance(settings[key], bool):
             return False
 
     for key in ["cellNum", "intervalMilliseconds"]:
-        if not(key in settings.keys()) or (type(settings[key]) != int) or (settings[key] < 0):
+        if not(key in settings.keys()) or not isinstance(settings[key], int) or (settings[key] < 0):
             return False
 
     if settings["cellNum"] < 2:
@@ -121,7 +122,7 @@ def validateSettings(settings):
 def readWriteSettings():
     if not doSettingsExist():
         print("settings.json does not exist, creating it")
-        writeSettingsFile(DEFAULT_SETTINGS)
+        writeSettingsFile(constants.DEFAULT_SETTINGS)
 
     settings = readSettingsFile()
 
@@ -140,26 +141,26 @@ def genStyleSheet(backgroundColor="#fff", color="#fff"):
                 "background-color: " + color + "; "
                 "}"
                 )
-    else:
-        return "color: " + color + ";" + "background-color: " + backgroundColor
+
+    return "color: " + color + ";" + "background-color: " + backgroundColor
 
 
 def matrixToCheckboxes(matrix, checkboxes):
     for y, row in enumerate(matrix):
         for x, value in enumerate(row):
-            if value == CELL_TYPES.empty:
+            if value == constants.CELL_TYPES.empty:
                 checkboxes[y][x].setChecked(False)
                 checkboxes[y][x].setStyleSheet(genStyleSheet('#fff'))
             else:
                 checkboxes[y][x].setChecked(True)
-                if value == CELL_TYPES.snakeSegment:
-                    color = COLORS.snakeSegment
+                if value == constants.CELL_TYPES.snakeSegment:
+                    color = constants.COLORS.snakeSegment
                     backgroundColor = "#fff"
-                elif value == CELL_TYPES.snakeHead:
-                    color = COLORS.snakeHead
+                elif value == constants.CELL_TYPES.snakeHead:
+                    color = constants.COLORS.snakeHead
                     backgroundColor = "#ccc"
-                elif value == CELL_TYPES.food:
-                    color = COLORS.food
+                elif value == constants.CELL_TYPES.food:
+                    color = constants.COLORS.food
                     backgroundColor = "#ccc"
 
                 checkboxes[y][x].setStyleSheet(

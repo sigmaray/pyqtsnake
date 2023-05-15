@@ -1,29 +1,30 @@
-from constants import DEFAULT_SETTINGS
-from lib import validateSettings
-import sys
-from munch import Munch, munchify, unmunchify
+"""Settings dialog"""
 
+import sys
+from munch import Munch, munchify
 from PyQt5.QtWidgets import (
     QApplication,
     QFormLayout,
     QLabel,
     QLineEdit,
-    QWidget,
     QDialogButtonBox,
     QVBoxLayout,
     QDialog,
     QCheckBox,
     QMessageBox
 )
-
 from PyQt5 import QtCore
+from lib import validateSettings
+from constants import DEFAULT_SETTINGS
+
 
 class SettingsDialog(QDialog):
+    """PyQt dialog that is being opened from snake game"""
     settings = None
 
     def __init__(self, existingSettings):
         super().__init__()
-        # self.setModal(True)        
+        # self.setModal(True)
         self.setWindowTitle("Settings")
         # self.resize(270, 110)
         # Create a QFormLayout instance
@@ -31,7 +32,8 @@ class SettingsDialog(QDialog):
 
         formLayout = QFormLayout()
         self.elIntervalMilliseconds = QLineEdit()
-        self.elIntervalMilliseconds.setText(str(existingSettings.intervalMilliseconds))
+        self.elIntervalMilliseconds.setText(
+            str(existingSettings.intervalMilliseconds))
         formLayout.addRow("Interval (milliseconds) (> 0):",
                           self.elIntervalMilliseconds)
         self.elCellNum = QLineEdit()
@@ -54,7 +56,8 @@ class SettingsDialog(QDialog):
         self.button_box.rejected.connect(self.onReject)
 
         dlgLayout.addLayout(formLayout)
-        dlgLayout.addWidget(QLabel("Clicking Ok button will reset game progress and restart the application"))
+        dlgLayout.addWidget(QLabel(
+            "Clicking Ok button will reset game progress and restart the application"))
         dlgLayout.addWidget(self.button_box)
 
         # Set the layout on the application's window
@@ -71,8 +74,8 @@ class SettingsDialog(QDialog):
                 self.elIntervalMilliseconds.text())
             settings.cellNum = int(self.elCellNum.text())
             settings.checkIsOut = self.elCheckIsOut.isChecked()
-            settings.checkIsColliding = self.elCheckIsColliding.isChecked()            
-            if (validateSettings(settings)):
+            settings.checkIsColliding = self.elCheckIsColliding.isChecked()
+            if validateSettings(settings):
                 self.settings = settings
                 self.accept()
             else:

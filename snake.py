@@ -1,16 +1,17 @@
+"""Snake game with checkboxes"""
 from copy import deepcopy
 import sys
-from PyQt5 import *
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import *
-
-from constants import *
-from lib import *
-from settings_dialog import SettingsDialog
+from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QToolBar, QAction, \
+    QLabel, QHBoxLayout, QCheckBox
 from munch import munchify
+from settings_dialog import SettingsDialog
+import lib
+import constants
 
 
 class SnakeCheckboxes(QWidget):
+    """PyQt window"""
     # https://stackoverflow.com/a/34372471
     EXIT_CODE_REBOOT = -123
 
@@ -30,7 +31,7 @@ class SnakeCheckboxes(QWidget):
             "snakeDirection": "right",
             "isPaused": False,
             "snakeSegments": snakeSegments,
-            "food": generateFoodPosition(snakeSegments, self.settings.cellNum),
+            "food": lib.generateFoodPosition(snakeSegments, self.settings.cellNum),
             "switchingDirection": False,
         })
 
@@ -67,28 +68,28 @@ class SnakeCheckboxes(QWidget):
         self.makeMove()
 
     def makeMove(self):
-        ateFood = isEating(self.state.snakeSegments, self.state.food)
+        ateFood = lib.isEating(self.state.snakeSegments, self.state.food)
 
         head = self.state.snakeSegments[-1]
         newHead = deepcopy(head)
 
         d = self.state.snakeDirection
-        if (d == "right"):
+        if d == "right":
             if (head["x"] < self.settings.cellNum - 1 or self.settings.checkIsOut):
                 newHead["x"] += 1
             else:
                 newHead["x"] = 0
-        elif (d == "left"):
+        elif d == "left":
             if (head["x"] > 0 or self.settings.checkIsOut):
                 newHead["x"] -= 1
             else:
                 newHead["x"] = self.settings.cellNum - 1
-        elif (d == "up"):
+        elif d == "up":
             if (head["y"] > 0 or self.settings.checkIsOut):
                 newHead["y"] -= 1
             else:
                 newHead["y"] = self.settings.cellNum - 1
-        if (d == "down"):
+        if d == "down":
             if (head["y"] < self.settings.cellNum - 1 or self.settings.checkIsOut):
                 newHead["y"] += 1
             else:
@@ -97,33 +98,33 @@ class SnakeCheckboxes(QWidget):
         if not ateFood:
             self.state.snakeSegments.pop(0)
         else:
-            self.state.food = generateFoodPosition(
-                self.state.snakeSegments, self.settings.cellNum, self.state.food)
+            self.state.food = lib.generateFoodPosition(
+                self.state.snakeSegments, self.settings.cellNum)
             if not self.state.food:
                 self.endGame("You won!")
                 return
 
         self.state.snakeSegments.append(newHead)
 
-        if self.settings.checkIsOut and isOut(self.state.snakeSegments, self.settings.cellNum):
+        if self.settings.checkIsOut and lib.isOut(self.state.snakeSegments, self.settings.cellNum):
             self.endGame("Snake is out of board. You lost")
             return
 
-        if self.settings.checkIsColliding and isColliding(self.state.snakeSegments):
+        if self.settings.checkIsColliding and lib.isColliding(self.state.snakeSegments):
             self.endGame("Snake collision. You lost")
             return
 
-        matrix = snakeAndFoodToMatrix(self.state.snakeSegments,
-                                      self.settings.cellNum, self.state.food)
+        matrix = lib.snakeAndFoodToMatrix(self.state.snakeSegments,
+                                          self.settings.cellNum, self.state.food)
 
         self.render(matrix)
 
         self.state.switchingDirection = False
 
     def determineDelta(self, intervalMilliseconds, direction=["up", "down"][0]):
-        if intervalMilliseconds <= 250 and intervalMilliseconds >= 20:
+        if 20 <= intervalMilliseconds <= 250:
             delta = 10
-        elif intervalMilliseconds < 20 and intervalMilliseconds > 10:
+        elif 10 < intervalMilliseconds < 20:
             if direction == "down":
                 delta = intervalMilliseconds - 10
             elif direction == "up":
@@ -133,7 +134,7 @@ class SnakeCheckboxes(QWidget):
                 delta = 1
             elif direction == "up":
                 delta = 10
-        elif intervalMilliseconds < 10 and intervalMilliseconds > 0:
+        elif 0 < intervalMilliseconds < 10:
             delta = 1
         elif intervalMilliseconds == 0:
             if direction == "down":
@@ -148,7 +149,7 @@ class SnakeCheckboxes(QWidget):
         self.settings.intervalMilliseconds -= self.determineDelta(
             self.settings.intervalMilliseconds, "down")
 
-        writeSettingsFile(self.settings)
+        lib.writeSettingsFile(self.settings)
 
         self.speedLabel.setText(str(self.settings.intervalMilliseconds))
 
@@ -159,7 +160,7 @@ class SnakeCheckboxes(QWidget):
         self.settings.intervalMilliseconds += self.determineDelta(
             self.settings.intervalMilliseconds, "up")
 
-        writeSettingsFile(self.settings)
+        lib.writeSettingsFile(self.settings)
 
         self.speedLabel.setText(str(self.settings.intervalMilliseconds))
 
@@ -169,8 +170,8 @@ class SnakeCheckboxes(QWidget):
     def showSettings(self):
         self.pause()
         settings, result = SettingsDialog.run(self.settings)
-        if (result):
-            writeSettingsFile(settings)
+        if result:
+            lib.writeSettingsFile(settings)
 
             # https://stackoverflow.com/a/62611055
             QtCore.QCoreApplication.quit()
@@ -217,12 +218,12 @@ class SnakeCheckboxes(QWidget):
     def __init__(self):
         super().__init__()
 
-        if not doSettingsExist():
-            writeSettingsFile(DEFAULT_SETTINGS)
+        if not lib.doSettingsExist():
+            lib.writeSettingsFile(constants.DEFAULT_SETTINGS)
 
         self.layout = QVBoxLayout()
 
-        self.settings = munchify(readWriteSettings())
+        self.settings = munchify(lib.readWriteSettings())
 
         self.state = self.generateState()
 
@@ -237,7 +238,7 @@ class SnakeCheckboxes(QWidget):
         self.timer.start(self.settings.intervalMilliseconds)
 
     def render(self, matrix):
-        matrixToCheckboxes(matrix, self.checkboxes)
+        lib.matrixToCheckboxes(matrix, self.checkboxes)
 
     def addBoard(self):
         self.checkboxes = []
