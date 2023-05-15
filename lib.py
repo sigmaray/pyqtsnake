@@ -5,6 +5,7 @@ import os
 import json
 import sys
 
+
 def deep_copy(o):
     return json.loads(json.dumps(o))
 
@@ -72,7 +73,8 @@ def generateFoodPosition(snakeSegments, cellNum, food=None):
                     "y": y
                 })
 
-    if len(availableCells) == 0: return None
+    if len(availableCells) == 0:
+        return None
     return munchify(random.choice(availableCells))
 
 # def createSettings:
@@ -132,7 +134,7 @@ def readWriteSettings():
     return settings
 
 
-def genStyleSheet(backgroundColor = "#fff", color = "#fff"):
+def genStyleSheet(backgroundColor="#fff", color="#fff"):
     if sys.platform == "win32":
         return ("QCheckBox::indicator {" +
                 "background-color: " + color + "; "
@@ -160,6 +162,5 @@ def matrixToCheckboxes(matrix, checkboxes):
                     color = COLORS.food
                     backgroundColor = "#ccc"
 
-                checkboxes[y][x].setStyleSheet(genStyleSheet(backgroundColor, color))
-
-
+                checkboxes[y][x].setStyleSheet(
+                    genStyleSheet(backgroundColor, color))

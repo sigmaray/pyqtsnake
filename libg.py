@@ -2,18 +2,24 @@ from PyQt5.QtGui import QPainter, QBrush, QPen, QColor
 from PyQt5.QtCore import Qt
 from constants import CELL_TYPES
 
+
 def matrixToCanvas(matrix, CELL_SIZE, painter):
     for y, row in enumerate(matrix):
         for x, value in enumerate(row):
             if value == CELL_TYPES.empty:
-                drawEmpty(painter, x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+                drawEmpty(painter, x * CELL_SIZE, y *
+                          CELL_SIZE, CELL_SIZE, CELL_SIZE)
             else:
                 if value == CELL_TYPES.snakeSegment:
-                    drawSnakeSegment(painter, x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+                    drawSnakeSegment(painter, x * CELL_SIZE,
+                                     y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
                 elif value == CELL_TYPES.snakeHead:
-                    drawSnakeHead(painter, x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+                    drawSnakeHead(painter, x * CELL_SIZE, y *
+                                  CELL_SIZE, CELL_SIZE, CELL_SIZE)
                 elif value == CELL_TYPES.food:
-                    drawFood(painter, x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+                    drawFood(painter, x * CELL_SIZE, y *
+                             CELL_SIZE, CELL_SIZE, CELL_SIZE)
+
 
 def drawRectangle(
         painter,
@@ -60,6 +66,7 @@ def drawEmpty(
         w,
         h, '#ccc')
 
+
 def drawSnakeSegment(
         painter,
         x,
@@ -76,6 +83,7 @@ def drawSnakeSegment(
         y,
         w,
         h, 'blue')
+
 
 def drawSnakeHead(
         painter,
@@ -94,6 +102,7 @@ def drawSnakeHead(
         w,
         h, 'yellow')
 
+
 def drawFood(
         painter,
         x,
@@ -110,4 +119,3 @@ def drawFood(
         y,
         w,
         h, 'red')
-
