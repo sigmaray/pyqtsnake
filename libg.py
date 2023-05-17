@@ -38,7 +38,7 @@ def drawRectangle(
     # pen.setWidth(1)
     pen.setColor(QColor(borderColor))
     painter.setPen(pen)
-    painter.setBrush(QBrush(QColor(color), Qt.SolidPattern))
+    painter.setBrush(QBrush(QColor(color), Qt.SolidPattern))  # type: ignore
     painter.drawRect(x, y, width - 1, height - 1)
 
 

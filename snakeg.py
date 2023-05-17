@@ -23,7 +23,7 @@ class SnakeCanvas(SnakeCheckboxes):
         self.widgets.label.setPixmap(canvas)
         self.widgets.painter = QtGui.QPainter(self.widgets.label.pixmap())
 
-    def render(self, matrix):
+    def renderGame(self, matrix):
         """
         Overriding method of parent class (SnakeCheckboxes):
         Render to canvas instead of checkboxes
