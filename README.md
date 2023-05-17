@@ -18,6 +18,21 @@ python snake.py
 ```
 python snakeg.py
 ```
+
+## How to launch game using docker compose
+
+```
+docker-compose up
+```
+
+Open http://localhost:8080/ in browser. Click on `vnc_auto.html`
+
+## How to launch game using docker
+
+```
+make docker-build-and-run # It will do this: docker build -t pyqtsnake . && docker run -it -p 8080:8080 pyqtsnake
+```
+
 ## Screenshots
 
 ![image](https://github.com/sigmaray/pyqtsnake/assets/1594701/e95b340b-d4ea-4124-9200-0893e0e148e6)
