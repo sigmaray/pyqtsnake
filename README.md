@@ -1,4 +1,4 @@
-# Stopwatch game in Python/QT
+# Snake game in Python/QT
 
 ## How to install:
 ```
@@ -18,3 +18,10 @@ python snake.py
 ```
 python snakeg.py
 ```
+## Screenshots
+
+![image](https://github.com/sigmaray/pyqtsnake/assets/1594701/e95b340b-d4ea-4124-9200-0893e0e148e6)
+
+![image](https://github.com/sigmaray/pyqtsnake/assets/1594701/9a0c3649-7e41-47f1-9578-ae8e1960fad5)
+
+![image](https://github.com/sigmaray/pyqtsnake/assets/1594701/4b1cec67-fb40-42d5-b0d9-afec82a4da1a)
