@@ -1,44 +1,53 @@
-from munch import munchify
-from constants import *
+"""Helper functions"""
 import random
 import os
 import json
 import sys
+from copy import deepcopy
+from typing import List
+import dataclasses
+from dacite import from_dict
+from PyQt5.QtWidgets import QCheckBox
+import constants as c
+import type_declarations as t
 
-def deep_copy(o):
-    return json.loads(json.dumps(o))
 
-
-def gen_default_matrix(cellNum):
+def genDefaultMatrix(cellNum: int) -> List[List[t.CellType]]:
+    """Generate default game board (with empty cells)"""
     matrix = [
-        [CELL_TYPES.empty] * cellNum
-    ] * cellNum
-    return deep_copy(matrix)
+        [t.CellTypes.empty for _ in range(cellNum)] for _ in range(cellNum)
+    ]
+    return deepcopy(matrix)  # type: ignore
 
 
-def snakeAndFoodToMatrix(snakeSegments, cellNum, food=None):
-    matrix = gen_default_matrix(cellNum)
+def snakeAndFoodToMatrix(
+    snakeSegments: List[t.Coordinate], cellNum: int, food=None
+) -> List[List[t.CellType]]:
+    """Put snake and food into board matrix (2D array)"""
+    matrix = genDefaultMatrix(cellNum)
 
     for i, segment in enumerate(snakeSegments):
         if i == len(snakeSegments) - 1:
-            type = CELL_TYPES.snakeHead
+            cellType = t.CellTypes.snakeHead
         else:
-            type = CELL_TYPES.snakeSegment
+            cellType = t.CellTypes.snakeSegment
 
-        matrix[segment["y"]][segment["x"]] = type
+        matrix[segment.y][segment.x] = cellType
 
     if food:
-        matrix[food["y"]][food["x"]] = CELL_TYPES.food
+        matrix[food.y][food.x] = t.CellTypes.food
 
     return matrix
 
 
-def isEating(snakeSegments, food):
+def isEating(snakeSegments: List[t.Coordinate], food) -> bool:
+    """Check if snake intersects with the food"""
     head = snakeSegments[-1]
     return head.x == food.x and head.y == food.y
 
 
-def isOut(snakeSegments, cellNum):
+def isOut(snakeSegments: List[t.Coordinate], cellNum: int) -> bool:
+    """Check if snake went out of the board"""
     for segment in snakeSegments:
         if (
             segment.x < 0 or
@@ -50,7 +59,8 @@ def isOut(snakeSegments, cellNum):
     return False
 
 
-def isColliding(snakeSegments):
+def isColliding(snakeSegments: List[t.Coordinate]) -> bool:
+    """Check if snake is colliding with itself"""
     for i, segment in enumerate(snakeSegments):
         for j, segment2 in enumerate(snakeSegments):
             if i != j:
@@ -59,67 +69,67 @@ def isColliding(snakeSegments):
     return False
 
 
-def generateFoodPosition(snakeSegments, cellNum, food=None):
+def generateFoodPosition(snakeSegments: List[t.Coordinate], cellNum: int):
+    """Generate new random position for food not intersecting with snake"""
     matrix = snakeAndFoodToMatrix(snakeSegments, cellNum)
     availableCells = []
-#   matrix.forEach((row, y)= > {
     for y, row in enumerate(matrix):
-        # row.forEach((value, x)= > {
         for x, value in enumerate(row):
-            if value == CELL_TYPES.empty:
-                availableCells.append({
-                    "x": x,
-                    "y": y
-                })
+            if value == t.CellTypes.empty:
+                availableCells.append(t.Coordinate(
+                    x=x,
+                    y=y
+                ))
 
-    if len(availableCells) == 0: return None
-    return munchify(random.choice(availableCells))
-
-# def createSettings:
-
-
-def doSettingsExist():
-    return os.path.isfile(SETTINGS_FILE)
+    if len(availableCells) == 0:
+        return None
+    return random.choice(availableCells)
 
 
-def writeSettingsFile(hashmap):
-    with open(SETTINGS_FILE, 'w') as f:
-        f.write(json.dumps(hashmap))
+def doSettingsExist(fileName: str = c.SETTINGS_FILE) -> bool:
+    """Check if settings.json file exists"""
+    return os.path.isfile(fileName)
 
 
-def readSettingsFile():
-    with open(SETTINGS_FILE) as f:
-        return json.load(f)
+def writeSettingsFile(settings: t.Settings, fileName: str = c.SETTINGS_FILE) -> None:
+    """Write Settings object into settings.json"""
+    with open(fileName, 'w', encoding="utf-8") as f:
+        f.write(json.dumps(dataclasses.asdict(settings)))
 
 
-def validateSettings(settings):
+def readSettingsFile(fileName: str = c.SETTINGS_FILE) -> t.Settings:
+    """Read settings.json Settings object"""
+    with open(fileName, encoding="utf-8") as f:
+        return from_dict(data_class=t.Settings, data=json.load(f))
+
+
+def validateSettings(settings: t.Settings) -> bool:
+    """Validate user input. All fields should be present. Values should not be below zero."""
+    keys = [field.name for field in dataclasses.fields(t.Settings)]
 
     for key in ["checkIsOut", "checkIsColliding"]:
-        if not(key in settings.keys()) or (type(settings[key]) != bool):
+        if key not in keys or not isinstance(getattr(settings, key), bool):
             return False
 
     for key in ["cellNum", "intervalMilliseconds"]:
-        if not(key in settings.keys()) or (type(settings[key]) != int) or (settings[key] < 0):
+        if (
+            key not in keys or
+            not isinstance(getattr(settings, key), int) or
+            getattr(settings, key) < 0
+        ):
             return False
 
-    if settings["cellNum"] < 2:
+    if settings.cellNum < 2:
         return False
 
     return True
 
 
-# settings = {
-#     "canvasSize": 500,
-#     "cellNum": 15,
-#     "intervalMilliseconds": 150,
-#     "checkIsOut": False,
-#     "checkIsColliding": False,
-# }
-
-def readWriteSettings():
+def readOrCreateSettings(defaultSettings: t.Settings = c.DEFAULT_SETTINGS) -> t.Settings:
+    """Read settings.json. If it doesn't exist, create it and fill it with default values"""
     if not doSettingsExist():
         print("settings.json does not exist, creating it")
-        writeSettingsFile(DEFAULT_SETTINGS)
+        writeSettingsFile(defaultSettings)
 
     settings = readSettingsFile()
 
@@ -132,34 +142,35 @@ def readWriteSettings():
     return settings
 
 
-def genStyleSheet(backgroundColor = "#fff", color = "#fff"):
+def genStyleSheet(backgroundColor: str = "#fff", color: str = "#fff") -> str:
+    """Generate checkbox css (it should be diffirent in windows and linux)"""
     if sys.platform == "win32":
         return ("QCheckBox::indicator {" +
                 "background-color: " + color + "; "
                 "}"
                 )
-    else:
-        return "color: " + color + ";" + "background-color: " + backgroundColor
+
+    return "color: " + color + ";" + "background-color: " + backgroundColor
 
 
-def matrixToCheckboxes(matrix, checkboxes):
+def matrixToCheckboxes(matrix: List[List[t.CellType]], checkboxes: List[QCheckBox]):
+    """Render 2D array to checkboxes"""
     for y, row in enumerate(matrix):
         for x, value in enumerate(row):
-            if value == CELL_TYPES.empty:
+            if value == t.CellTypes.empty:
                 checkboxes[y][x].setChecked(False)
                 checkboxes[y][x].setStyleSheet(genStyleSheet('#fff'))
             else:
                 checkboxes[y][x].setChecked(True)
-                if value == CELL_TYPES.snakeSegment:
-                    color = COLORS.snakeSegment
+                if value == t.CellTypes.snakeSegment:
+                    color = c.CHECKBOX_COLORS.snakeSegment
                     backgroundColor = "#fff"
-                elif value == CELL_TYPES.snakeHead:
-                    color = COLORS.snakeHead
+                elif value == t.CellTypes.snakeHead:
+                    color = c.CHECKBOX_COLORS.snakeHead
                     backgroundColor = "#ccc"
-                elif value == CELL_TYPES.food:
-                    color = COLORS.food
+                elif value == t.CellTypes.food:
+                    color = c.CHECKBOX_COLORS.food
                     backgroundColor = "#ccc"
 
-                checkboxes[y][x].setStyleSheet(genStyleSheet(backgroundColor, color))
-
-
+                checkboxes[y][x].setStyleSheet(
+                    genStyleSheet(backgroundColor, color))

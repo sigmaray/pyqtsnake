@@ -1,2 +1,4 @@
 PyQt5==5.15.4
 munch==2.5.0
+dacite==1.8.1
+flake8==6.0.0
