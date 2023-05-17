@@ -1,6 +1,6 @@
 # Snake game in Python/QT
 
-## How to install:
+## How to install
 ```
 python3 -m venv .venv # optional
 source .venv/bin/activate # optional
@@ -30,7 +30,8 @@ Open http://localhost:8080/ in browser. Click on `vnc_auto.html`
 ## How to launch game using docker
 
 ```
-make docker-build-and-run # It will do this: docker build -t pyqtsnake . && docker run -it -p 8080:8080 pyqtsnake
+# It will do this: docker build -t pyqtsnake . && docker run -it -p 8080:8080 pyqtsnake
+make docker-build-and-run 
 ```
 
 ## Screenshots
