@@ -1,4 +1,4 @@
-"""Settings dialog"""
+"""Settings dialog."""
 
 import sys
 from PyQt5.QtWidgets import (
@@ -20,13 +20,19 @@ import type_declarations as t
 
 
 class SettingsDialog(QDialog):
-    """PyQt dialog that is being opened from snake game"""
+    """PyQt dialog that is being opened from snake game."""
+
     settings: t.Settings
 
     # Put all inputs inside the scope
-    widgets = Munch()
+    inputs = Munch()
 
     def __init__(self, existingSettings):
+        """
+        Create UI elements and connect them to handler functions.
+
+        @param existingSettings: existing settings read from disk
+        """
         super().__init__()
 
         # self.setModal(True)
@@ -38,20 +44,20 @@ class SettingsDialog(QDialog):
         vLayout = QVBoxLayout()
 
         formLayout = QFormLayout()
-        self.widgets.intervalMilliseconds = QLineEdit()
-        self.widgets.intervalMilliseconds.setText(
+        self.inputs.intervalMilliseconds = QLineEdit()
+        self.inputs.intervalMilliseconds.setText(
             str(existingSettings.intervalMilliseconds))
         formLayout.addRow("Interval (milliseconds) (> 0):",
-                          self.widgets.intervalMilliseconds)
-        self.widgets.cellNum = QLineEdit()
-        self.widgets.cellNum.setText(str(existingSettings.cellNum))
-        formLayout.addRow("Cell Num (>= 2):", self.widgets.cellNum)
-        self.widgets.checkIsOut = QCheckBox()
-        self.widgets.checkIsOut.setChecked(existingSettings.checkIsOut)
-        formLayout.addRow("Check is Out", self.widgets.checkIsOut)
-        self.widgets.checkIsColliding = QCheckBox()
-        self.widgets.checkIsColliding.setChecked(existingSettings.checkIsColliding)
-        formLayout.addRow("Check is Colliding", self.widgets.checkIsColliding)
+                          self.inputs.intervalMilliseconds)
+        self.inputs.cellNum = QLineEdit()
+        self.inputs.cellNum.setText(str(existingSettings.cellNum))
+        formLayout.addRow("Cell Num (>= 2):", self.inputs.cellNum)
+        self.inputs.checkIsOut = QCheckBox()
+        self.inputs.checkIsOut.setChecked(existingSettings.checkIsOut)
+        formLayout.addRow("Check is Out", self.inputs.checkIsOut)
+        self.inputs.checkIsColliding = QCheckBox()
+        self.inputs.checkIsColliding.setChecked(existingSettings.checkIsColliding)
+        formLayout.addRow("Check is Colliding", self.inputs.checkIsColliding)
 
         buttonBox = QDialogButtonBox()
         buttonBox.setStandardButtons(
@@ -69,19 +75,19 @@ class SettingsDialog(QDialog):
         self.setLayout(vLayout)
 
     def showValidationErrorWarning(self):
-        """Inform user that he inputted wrong values"""
+        """Inform user that he inputted wrong values."""
         QMessageBox.warning(self, "Validation error",
                             "Please enter correct values")
 
     def onAccept(self):
-        "When users clicks Ok button or presses Enter"
+        """When users clicks Ok button or presses Enter."""
         try:
             settings = t.Settings(
                 intervalMilliseconds=int(
-                    self.widgets.intervalMilliseconds.text()),
-                cellNum=int(self.widgets.cellNum.text()),
-                checkIsOut=self.widgets.checkIsOut.isChecked(),
-                checkIsColliding=self.widgets.checkIsColliding.isChecked()
+                    self.inputs.intervalMilliseconds.text()),
+                cellNum=int(self.inputs.cellNum.text()),
+                checkIsOut=self.inputs.checkIsOut.isChecked(),
+                checkIsColliding=self.inputs.checkIsColliding.isChecked()
             )
             if validateSettings(settings):
                 self.settings = settings
@@ -92,12 +98,16 @@ class SettingsDialog(QDialog):
             self.showValidationErrorWarning()
 
     def onReject(self):
-        "When users clicks Cancel button or presses Esc"
+        """When users clicks Cancel button or presses Esc."""
         self.reject()
 
     @staticmethod
     def run(existingSettings):
-        """Show dialog and return its result"""
+        """
+        Show dialog and return its result.
+
+        @param existingSettings: existing settings read from disk
+        """
         dialog = SettingsDialog(existingSettings)
         dialog.setWindowModality(QtCore.Qt.ApplicationModal)
         result = dialog.exec_()

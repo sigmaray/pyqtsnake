@@ -1,4 +1,4 @@
-"""Snake game with checkboxes"""
+"""Snake game with checkboxes."""
 from copy import deepcopy
 import sys
 from typing import Literal, List
@@ -8,12 +8,11 @@ from PyQt5.QtWidgets import (QWidget, QApplication, QVBoxLayout, QToolBar, QActi
 from munch import Munch
 from settings_dialog import SettingsDialog
 import lib
-import constants
 import type_declarations as t
 
 
 class SnakeCheckboxes(QWidget):
-    """PyQt window"""
+    """PyQt window."""
 
     # Add some content to prevent form elements moving
     LABEL_PLACEHOLDER = " "
@@ -24,33 +23,37 @@ class SnakeCheckboxes(QWidget):
     widgets = Munch()
 
     def __init__(self):
+        """
+        Initialize the game.
+
+        * Read (or create) settings.
+        * Create UI elements.
+        * Generate default state.
+        * Create and start timer.
+        """
         super().__init__()
-
-        if not lib.doSettingsExist():
-            lib.writeSettingsFile(constants.DEFAULT_SETTINGS)
-
-        self.widgets.layout = QVBoxLayout()
 
         self.settings = lib.readOrCreateSettings()
 
         self.state = self.generateState()
 
+        self.widgets.layout = QVBoxLayout()
+        self.setLayout(self.widgets.layout)
+
         self.addToolbar()
 
         self.addBoard()
 
-        self.setLayout(self.widgets.layout)
-
         self.addTimer()
 
     def addTimer(self):
-        """Add timer and connect it to handler function"""
+        """Add timer and connect it to handler function."""
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.onTimer)
         self.timer.start(self.settings.intervalMilliseconds)
 
     def generateState(self):
-        """Generate initial game state"""
+        """Generate initial game state."""
         snakeSegments = [
             t.Coordinate(x=0, y=0)
         ]
@@ -65,25 +68,25 @@ class SnakeCheckboxes(QWidget):
         )
 
     def onClickRestart(self):
-        """When Restart button is clicked: restart the game"""
+        """When Restart button is clicked: restart the game."""
         self.state = self.generateState()
         self.widgets.labelStatus.setText(self.LABEL_PLACEHOLDER)
         self.timer.start(self.settings.intervalMilliseconds)
 
     def pause(self):
-        """Pause the game"""
+        """Pause the game."""
         self.state.isPaused = True
         self.timer.stop()
         self.widgets.labelStatus.setText("paused")
 
     def unpause(self):
-        """Unpause the game"""
+        """Unpause the game."""
         self.state.isPaused = False
         self.timer.start(self.settings.intervalMilliseconds)
         self.widgets.labelStatus.setText(self.LABEL_PLACEHOLDER)
 
     def onTogglePauseClick(self):
-        """When user clicked on Pause or Unpause button"""
+        """When user clicked on Pause or Unpause button."""
         if not self.state.isPaused:
             self.state.isPaused = True
             self.timer.stop()
@@ -95,20 +98,24 @@ class SnakeCheckboxes(QWidget):
 
     def endGame(self, message: str = "game is over"):
         """
-        End the game:
+        End the game.
+
         * Show a message to user
         * Stop timer
+
+        @param message: message that will be shown to user
         """
         self.widgets.labelStatus.setText(message)
         self.timer.stop()
 
     def onTimer(self):
-        """When timer is triggerd: do next iteration of the game"""
+        """When timer is triggerd: do next iteration of the game."""
         self.makeMove()
 
     def makeMove(self):
         """
-        When timer is called or when user presses same button a few times:
+        When timer is called or when user presses same button a few times.
+
         * Move snake by one cell
         * Check if food is eaten (generate new random food and increase snake lenght)
         * Check if game is over
@@ -170,8 +177,12 @@ class SnakeCheckboxes(QWidget):
     def determineDelta(self, currentInterval: int, direction: Literal["up", "down"]):
         """
         Determine how fast to change the interval (when user clicks button).
+
         If interval is small and change it slower.
         If it is large change it faster.
+
+        @param currentInterval: old interval
+        @param direction: should increase or decrease?
         """
         if 20 <= currentInterval <= 250:
             delta = 10
@@ -197,7 +208,7 @@ class SnakeCheckboxes(QWidget):
         return delta
 
     def onIntervalDecrClick(self):
-        """Speed up snake (when user clicks UI button or presses PageDown)"""
+        """Speed up snake (when user clicks UI button or presses PageDown)."""
         self.settings.intervalMilliseconds -= self.determineDelta(
             self.settings.intervalMilliseconds, "down")
 
@@ -210,7 +221,7 @@ class SnakeCheckboxes(QWidget):
         self.timer.start(self.settings.intervalMilliseconds)
 
     def onIntervalIncrClick(self):
-        """Slow down snake (when user clicks UI button or presses PageUp"""
+        """Slow down snake (when user clicks UI button or presses PageUp."""
         self.settings.intervalMilliseconds += self.determineDelta(
             self.settings.intervalMilliseconds, "up")
 
@@ -223,7 +234,7 @@ class SnakeCheckboxes(QWidget):
         self.timer.start(self.settings.intervalMilliseconds)
 
     def onShowSettingsClick(self):
-        """When user clicks Settings button"""
+        """When user clicks Settings button."""
         self.pause()
         settings, result = SettingsDialog.run(self.settings)
         if result:
@@ -236,7 +247,7 @@ class SnakeCheckboxes(QWidget):
             self.unpause()
 
     def addToolbar(self):
-        """Add toolbars with control buttons, bind buttons to click handlers"""
+        """Add toolbars with control buttons, bind buttons to click handlers."""
         self.widgets.toolBar = QToolBar()
         self.widgets.layout.addWidget(self.widgets.toolBar)
 
@@ -274,14 +285,15 @@ class SnakeCheckboxes(QWidget):
         self.widgets.toolBar3.addWidget(self.widgets.labelStatus)
 
     def renderGame(self, matrix: List[List[t.CellType]]):
-        """Render 2D array to checkboxes"""
+        """
+        Render 2D array to checkboxes.
+
+        @param matrix: 2D array that describes game board
+        """
         lib.matrixToCheckboxes(matrix, self.widgets.checkboxes)
 
     def addBoard(self):
-        """
-        Add board that will contain snake and food:
-        Create layout and checkboxes
-        """
+        """Add board that will contain snake and food: create layout and checkboxes."""
         self.widgets.checkboxes = []
         for _ in range(self.settings.cellNum):
             row = []
@@ -299,12 +311,13 @@ class SnakeCheckboxes(QWidget):
 
     def keyPressEvent(self, event):
         """
-        When user presses keyboard button:
-        * Change direction (if user pressesed different button)
-        * Move snake faster (when user presses same button one more time)
-        * Pause/unpase (when user clicked P button)
-        * Increase speed (when user presses PageDown)
-        * Decrease speed (when user presses PageUp)
+        When user presses keyboard button.
+
+        * Change direction (if user pressesed different button).
+        * Move snake faster (when user presses same button one more time).
+        * Pause/unpase (when user clicked P button).
+        * Increase speed (when user presses PageDown).
+        * Decrease speed (when user presses PageUp).
         """
         allowedKeys = [
             QtCore.Qt.Key_Up,
@@ -365,7 +378,7 @@ class SnakeCheckboxes(QWidget):
 
     @staticmethod
     def launch(klass):
-        """Receive window class as argument and launch application with this window"""
+        """Receive window class as argument and launch application with this window."""
         app = QApplication(sys.argv)
         window = klass()
         window.show()
