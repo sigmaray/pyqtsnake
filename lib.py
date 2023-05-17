@@ -12,18 +12,18 @@ import constants as c
 import type_declarations as t
 
 
-def genDefaultMatrix(cellNum: int) -> List[List[str]]:
-    """Generate default game board (all cells are empty)"""
+def genDefaultMatrix(cellNum: int) -> List[List[t.CellType]]:
+    """Generate default game board (with empty cells)"""
     matrix = [
-        [t.CellTypes.empty for x in range(cellNum)] for x in range(cellNum)
+        [t.CellTypes.empty for _ in range(cellNum)] for _ in range(cellNum)
     ]
-    return deepcopy(matrix)
+    return deepcopy(matrix)  # type: ignore
 
 
 def snakeAndFoodToMatrix(
     snakeSegments: List[t.Coordinate], cellNum: int, food=None
-) -> List[List[str]]:
-    """Put snake and food into board matrix (2d array)"""
+) -> List[List[t.CellType]]:
+    """Put snake and food into board matrix (2D array)"""
     matrix = genDefaultMatrix(cellNum)
 
     for i, segment in enumerate(snakeSegments):
@@ -41,13 +41,13 @@ def snakeAndFoodToMatrix(
 
 
 def isEating(snakeSegments: List[t.Coordinate], food) -> bool:
-    """Check if snake intersects with food"""
+    """Check if snake intersects with the food"""
     head = snakeSegments[-1]
     return head.x == food.x and head.y == food.y
 
 
 def isOut(snakeSegments: List[t.Coordinate], cellNum: int) -> bool:
-    """Check if snake went out of board"""
+    """Check if snake went out of the board"""
     for segment in snakeSegments:
         if (
             segment.x < 0 or
@@ -86,20 +86,20 @@ def generateFoodPosition(snakeSegments: List[t.Coordinate], cellNum: int):
     return random.choice(availableCells)
 
 
-def doSettingsExist() -> bool:
+def doSettingsExist(fileName: str = c.SETTINGS_FILE) -> bool:
     """Check if settings.json file exists"""
-    return os.path.isfile(c.SETTINGS_FILE)
+    return os.path.isfile(fileName)
 
 
-def writeSettingsFile(settings: t.Settings) -> None:
+def writeSettingsFile(settings: t.Settings, fileName: str = c.SETTINGS_FILE) -> None:
     """Write Settings object into settings.json"""
-    with open(c.SETTINGS_FILE, 'w', encoding="utf-8") as f:
+    with open(fileName, 'w', encoding="utf-8") as f:
         f.write(json.dumps(dataclasses.asdict(settings)))
 
 
-def readSettingsFile() -> t.Settings:
+def readSettingsFile(fileName: str = c.SETTINGS_FILE) -> t.Settings:
     """Read settings.json Settings object"""
-    with open(c.SETTINGS_FILE, encoding="utf-8") as f:
+    with open(fileName, encoding="utf-8") as f:
         return from_dict(data_class=t.Settings, data=json.load(f))
 
 
@@ -125,11 +125,11 @@ def validateSettings(settings: t.Settings) -> bool:
     return True
 
 
-def readOrCreateSettings() -> t.Settings:
+def readOrCreateSettings(defaultSettings: t.Settings = c.DEFAULT_SETTINGS) -> t.Settings:
     """Read settings.json. If it doesn't exist, create it and fill it with default values"""
     if not doSettingsExist():
         print("settings.json does not exist, creating it")
-        writeSettingsFile(c.DEFAULT_SETTINGS)
+        writeSettingsFile(defaultSettings)
 
     settings = readSettingsFile()
 
@@ -153,8 +153,8 @@ def genStyleSheet(backgroundColor: str = "#fff", color: str = "#fff") -> str:
     return "color: " + color + ";" + "background-color: " + backgroundColor
 
 
-def matrixToCheckboxes(matrix, checkboxes: List[QCheckBox]):
-    """Render 2d array to checkboxes"""
+def matrixToCheckboxes(matrix: List[List[t.CellType]], checkboxes: List[QCheckBox]):
+    """Render 2D array to checkboxes"""
     for y, row in enumerate(matrix):
         for x, value in enumerate(row):
             if value == t.CellTypes.empty:

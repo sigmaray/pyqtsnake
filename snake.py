@@ -1,6 +1,7 @@
 """Snake game with checkboxes"""
 from copy import deepcopy
 import sys
+from typing import Literal, List
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import (QWidget, QApplication, QVBoxLayout, QToolBar, QAction,
                              QLabel, QHBoxLayout, QCheckBox)
@@ -16,6 +17,8 @@ class SnakeCheckboxes(QWidget):
 
     # Add some content to prevent form elements moving
     LABEL_PLACEHOLDER = " "
+
+    state: t.State
 
     # Put all widgets inside the scope
     widgets = Munch()
@@ -107,8 +110,8 @@ class SnakeCheckboxes(QWidget):
         """
         When timer is called or when user presses same button a few times:
         * Move snake by one cell
-        * Check if game is over
         * Check if food is eaten (generate new random food and increase snake lenght)
+        * Check if game is over
         * Call renderer
         """
         ateFood = lib.isEating(self.state.snakeSegments, self.state.food)
@@ -164,10 +167,10 @@ class SnakeCheckboxes(QWidget):
 
         self.state.switchingDirection = False
 
-    def determineDelta(self, currentInterval: int, direction: str):
+    def determineDelta(self, currentInterval: int, direction: Literal["up", "down"]):
         """
-        Determine how fast to change the interval.
-        If interval is small, change it slower.
+        Determine how fast to change the interval (when user clicks button).
+        If interval is small and change it slower.
         If it is large change it faster.
         """
         if 20 <= currentInterval <= 250:
@@ -194,7 +197,7 @@ class SnakeCheckboxes(QWidget):
         return delta
 
     def onIntervalDecrClick(self):
-        """Speed up snake (when user clicks on UI button or presses PageDown)"""
+        """Speed up snake (when user clicks UI button or presses PageDown)"""
         self.settings.intervalMilliseconds -= self.determineDelta(
             self.settings.intervalMilliseconds, "down")
 
@@ -207,7 +210,7 @@ class SnakeCheckboxes(QWidget):
         self.timer.start(self.settings.intervalMilliseconds)
 
     def onIntervalIncrClick(self):
-        """Slow down snake (when user clicks on UI button or presses PageUpP"""
+        """Slow down snake (when user clicks UI button or presses PageUp"""
         self.settings.intervalMilliseconds += self.determineDelta(
             self.settings.intervalMilliseconds, "up")
 
@@ -270,8 +273,8 @@ class SnakeCheckboxes(QWidget):
         self.widgets.labelStatus = QLabel(self.LABEL_PLACEHOLDER)
         self.widgets.toolBar3.addWidget(self.widgets.labelStatus)
 
-    def render(self, matrix):
-        """Render 2d array to checkboxes"""
+    def render(self, matrix: List[List[t.CellType]]):
+        """Render 2D array to checkboxes"""
         lib.matrixToCheckboxes(matrix, self.widgets.checkboxes)
 
     def addBoard(self):
@@ -298,10 +301,10 @@ class SnakeCheckboxes(QWidget):
         """
         When user presses keyboard button:
         * Change direction (if user pressesed different button)
-        * Move snake faster (when user presses same button)
+        * Move snake faster (when user presses same button one more time)
         * Pause/unpase (when user clicked P button)
-        * Incr speed (when user presses PageDown)
-        * Dec speed (when user presses PageUp)
+        * Increase speed (when user presses PageDown)
+        * Decrease speed (when user presses PageUp)
         """
         allowedKeys = [
             QtCore.Qt.Key_Up,
@@ -362,7 +365,7 @@ class SnakeCheckboxes(QWidget):
 
     @staticmethod
     def launch(klass):
-        """Receive window class as argument and launch it"""
+        """Receive window class as argument and launch application with this window"""
         app = QApplication(sys.argv)
         window = klass()
         window.show()

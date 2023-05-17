@@ -1,7 +1,7 @@
 """Types for snake game"""
 # pylint: disable=missing-class-docstring
 from dataclasses import dataclass
-from typing import List
+from typing import List, Literal
 from enum import Enum
 
 
@@ -13,7 +13,7 @@ class Coordinate:
 
 @dataclass
 class State:
-    snakeDirection: str
+    snakeDirection: Literal["up", "down", "left", "right"]
     isPaused: bool
     snakeSegments: List[Coordinate]
     food: Coordinate
@@ -28,6 +28,9 @@ class CellTypes(str, Enum):
 
     def __str__(self) -> str:
         return str.__str__(self)
+
+
+CellType = Literal[CellTypes.empty, CellTypes.food, CellTypes.snakeSegment, CellTypes.snakeHead]
 
 
 @dataclass

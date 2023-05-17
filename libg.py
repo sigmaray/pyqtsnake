@@ -1,12 +1,13 @@
 """Helper functions for graphical Snake"""
+from typing import List
 from PyQt5.QtGui import QBrush, QPen, QColor, QPainter
 from PyQt5.QtCore import Qt
 import type_declarations as t
 import constants
 
 
-def matrixToCanvas(matrix, cellSize: int, painter: QPainter):
-    """Paint 2d array on canvas"""
+def matrixToCanvas(matrix: List[List[t.CellType]], cellSize: int, painter: QPainter):
+    """Paint 2D array on canvas"""
     for y, row in enumerate(matrix):
         for x, value in enumerate(row):
             if value == t.CellTypes.empty:
