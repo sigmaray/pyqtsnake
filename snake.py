@@ -163,7 +163,7 @@ class SnakeCheckboxes(QWidget):
         matrix = lib.snakeAndFoodToMatrix(self.state.snakeSegments,
                                           self.settings.cellNum, self.state.food)
 
-        self.render(matrix)
+        self.renderGame(matrix)
 
         self.state.switchingDirection = False
 
@@ -273,7 +273,7 @@ class SnakeCheckboxes(QWidget):
         self.widgets.labelStatus = QLabel(self.LABEL_PLACEHOLDER)
         self.widgets.toolBar3.addWidget(self.widgets.labelStatus)
 
-    def render(self, matrix: List[List[t.CellType]]):
+    def renderGame(self, matrix: List[List[t.CellType]]):
         """Render 2D array to checkboxes"""
         lib.matrixToCheckboxes(matrix, self.widgets.checkboxes)
 
