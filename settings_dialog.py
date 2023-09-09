@@ -22,7 +22,7 @@ import type_declarations as t
 class SettingsDialog(QDialog):
     """PyQt dialog that is being opened from snake game."""
 
-    settings: t.Settings
+    settings: t.Settings = None
 
     # Put all inputs inside the scope
     inputs = Munch()
