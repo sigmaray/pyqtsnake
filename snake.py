@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """Snake game with checkboxes."""
 from copy import deepcopy
 import sys

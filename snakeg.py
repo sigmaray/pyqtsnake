@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """Snake game with canvas."""
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QLabel
