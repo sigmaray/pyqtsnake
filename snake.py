@@ -72,7 +72,7 @@ class SnakeCheckboxes(QWidget):
             snakeSegments=snakeSegments,
             food=lib.generateFoodPosition(
                 snakeSegments, self.settings.cellNum),
-            switchingDirection=False,
+            switchingDirection=False
         )
 
     def onClickRestart(self):
@@ -134,6 +134,10 @@ class SnakeCheckboxes(QWidget):
         * Check if game is over
         * Call renderer
         """
+        # If there is no food game is over and we can't continue
+        if not self.state.food:
+            return
+
         oldHead = self.state.snakeSegments[-1]
         newHead = deepcopy(oldHead)
 
