@@ -29,6 +29,9 @@ def matrixToCanvas(matrix: List[List[t.CellType]], cellNum: int, painter: QPaint
                 elif value == t.CellTypes.food:
                     drawFood(painter, x * cellNum, y *
                              cellNum, cellNum, cellNum)
+                elif value == t.CellTypes.intersection:
+                    drawIntersection(painter, x * cellNum, y *
+                             cellNum, cellNum, cellNum)
 
 
 def drawRectangle(
@@ -169,6 +172,35 @@ def drawFood(
     @param height: food height
     @param backgroundColor: food background color
     @param borderColor: food border color
+    """
+    drawRectangle(
+        painter,
+        x,
+        y,
+        width,
+        height,
+        backgroundColor,
+        borderColor
+    )
+
+def drawIntersection(
+        painter: QPainter,
+        x: int,
+        y: int,
+        width: int,
+        height: int,
+        backgroundColor: str = constants.CANVAS_COLORS.intersectionBackground,
+        borderColor: str = constants.CANVAS_COLORS.border):
+    """
+    Draw intersection.
+
+    @param painter: canvas painter that will be used to draw intersection
+    @param x: x of left upper corner of intersection to be drawn
+    @param y: y of left upper corner of intersection to be drawn
+    @param width: intersection width
+    @param height: intersection height
+    @param backgroundColor: intersection background color
+    @param borderColor: intersection border color
     """
     drawRectangle(
         painter,
