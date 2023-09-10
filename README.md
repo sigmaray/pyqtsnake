@@ -13,13 +13,13 @@ pip install -r requirements.txt
 ```
 python snake.py
 ```
-In Windows you can double click launch_snake.bat
+In Windows you can double click launch_snake.pyw
 
 ## How to run game rendered with canvas
 ```
 python snakeg.py
 ```
-In Windows you can double click launch_snakeg.bat
+In Windows you can double click launch_snakeg.pyw
 
 ## How to launch game using docker compose
 
