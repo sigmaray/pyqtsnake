@@ -31,6 +31,7 @@ class CellTypes(str, Enum):
     food = 'food'
     snakeSegment = 'snakeSegment'
     snakeHead = 'snakeHead'
+    intersection = 'intersection'
 
     def __str__(self) -> str:
         """Make it possible to write ENUM.field instead of ENUM.field.value."""

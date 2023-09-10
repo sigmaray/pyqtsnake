@@ -164,7 +164,7 @@ class SnakeCheckboxes(QWidget):
             self.state.food = lib.generateFoodPosition(
                 self.state.snakeSegments, self.settings.cellNum)
             if not self.state.food:
-                self.endGame("You won! Press F5 or click \"Restart\" button")
+                self.endGame("You won!\nPress F5 or click \"Restart\" button")
                 return
 
         self.state.snakeSegments.append(newHead)
