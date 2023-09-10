@@ -10,7 +10,6 @@ class CHECKBOX_COLORS(str, Enum):
     snakeSegment = "Olive"
     snakeHead = "Green"
     food = "Red"
-    intersection = 'Yellow'
 
     def __str__(self) -> str:
         """Make it possible to write ENUM.field instead of ENUM.field.value."""
@@ -24,7 +23,6 @@ class CANVAS_COLORS(str, Enum):
     snakeSegmentBackground = "Green"
     snakeHeadBackground = "Blue"
     foodBackground = "Red"
-    intersectionBackground = "Yellow"
     border = "SlateBlue"
 
     def __str__(self) -> str:

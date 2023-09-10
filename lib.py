@@ -47,10 +47,7 @@ def snakeAndFoodToMatrix(
         matrix[segment.y][segment.x] = cellType
 
     if food:
-        if matrix[food.y][food.x] == t.CellTypes.snakeHead:
-            matrix[food.y][food.x] = t.CellTypes.intersection
-        else:
-            matrix[food.y][food.x] = t.CellTypes.food
+        matrix[food.y][food.x] = t.CellTypes.food
 
     return matrix
 
@@ -246,8 +243,6 @@ def matrixToCheckboxes(matrix: List[List[t.CellType]], checkboxes: List[QCheckBo
                     color = c.CHECKBOX_COLORS.snakeHead
                 elif value == t.CellTypes.food:
                     color = c.CHECKBOX_COLORS.food
-                elif value == t.CellTypes.intersection:
-                    color = c.CHECKBOX_COLORS.intersection
 
                 checkboxes[y][x].setStyleSheet(
                     genStyleSheet(color))
