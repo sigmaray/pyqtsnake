@@ -32,15 +32,15 @@ def matrixToCanvas(matrix: List[List[t.CellType]], cellSize: int, painter: QPain
 
 
 def drawRectangle(
-        painter: QPainter,
-        x: int,
-        y: int,
-        size: int,
-        backgroundColor: str = "#ccc",
-        borderColor: str = constants.CANVAS_COLORS.border,
-        border = None,
-        margin = None
-    ):
+    painter: QPainter,
+    x: int,
+    y: int,
+    size: int,
+    backgroundColor: str = "#ccc",
+    borderColor: str = constants.CANVAS_COLORS.border,
+    border=None,
+    margin=None
+):
     """
     Draw board cell on canvas.
 
@@ -55,9 +55,9 @@ def drawRectangle(
     b = border
     m = margin
 
-    if b == None:
+    if b is None:
         b = int(size * 0.05)
-    if m == None:
+    if m is None:
         m = int(size * 0.1)
 
     pen = QPen()

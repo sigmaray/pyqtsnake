@@ -177,10 +177,10 @@ def validateSettings(settings: t.Settings) -> bool:
 
     if settings.cellNum < 2:
         return False
-    
+
     if settings.cellSize < 1:
         return False
-    
+
     return True
 
 
@@ -206,7 +206,7 @@ def readOrCreateSettings(defaultSettings: t.Settings = c.DEFAULT_SETTINGS) -> t.
     return settings
 
 
-def genStyleSheet(color1: str, color2: str = "#fff") -> str:
+def genStyleSheet(color1: str) -> str:
     """
     Generate checkbox css
 
@@ -218,17 +218,18 @@ def genStyleSheet(color1: str, color2: str = "#fff") -> str:
 
     return (
         "QCheckBox {"
-            "margin-bottom: 2em;"                
+        "margin-bottom: 2em;"
         "}\n"
-        "QCheckBox::indicator {" 
-            "width: 1.2em;"
-            "height: 1.2em;"
+        "QCheckBox::indicator {"
+        "width: 1.2em;"
+        "height: 1.2em;"
         "}\n"
         "QCheckBox::indicator:checked {" +
-            "background-color: " + color1 + "; "
-            "image: url(checkbox.inverted.png);"
+        "background-color: " + color1 + "; "
+        "image: url(checkbox.inverted.png);"
         "}"
     )
+
 
 def matrixToCheckboxes(matrix: List[List[t.CellType]], checkboxes: List[QCheckBox]):
     """

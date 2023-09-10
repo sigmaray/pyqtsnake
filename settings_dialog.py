@@ -1,5 +1,6 @@
 """Settings dialog."""
 
+from typing import Optional
 import sys
 from PyQt5.QtWidgets import (
     QApplication,
@@ -22,7 +23,7 @@ import type_declarations as t
 class SettingsDialog(QDialog):
     """PyQt dialog that is being opened from snake game."""
 
-    settings: t.Settings = None
+    settings: Optional[t.Settings] = None
 
     # Put all inputs inside the scope
     inputs = Munch()
