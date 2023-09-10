@@ -261,7 +261,7 @@ class SnakeCheckboxes(QWidget):
         self.widgets.toolBar = QToolBar()
         self.widgets.layout.addWidget(self.widgets.toolBar)
 
-        actionPauseUnpause = QAction("interval-", self)
+        actionPauseUnpause = QAction("Interval-", self)
         actionPauseUnpause.triggered.connect(self.onIntervalDecrClick)
         self.widgets.toolBar.addAction(actionPauseUnpause)
 
@@ -269,30 +269,41 @@ class SnakeCheckboxes(QWidget):
             str(self.settings.intervalMilliseconds))
         self.widgets.toolBar.addWidget(self.widgets.speedLabel)
 
-        actionIntervalPlus = QAction("interval+", self)
+        actionIntervalPlus = QAction("Interval+", self)
         actionIntervalPlus.triggered.connect(self.onIntervalIncrClick)
         self.widgets.toolBar.addAction(actionIntervalPlus)
 
         self.widgets.toolBar2 = QToolBar()
         self.widgets.layout.addWidget(self.widgets.toolBar2)
 
-        actionPauseUnpause = QAction("(un)pause", self)
+        actionPauseUnpause = QAction("(Un)pause", self)
         actionPauseUnpause.triggered.connect(self.onTogglePauseClick)
         self.widgets.toolBar2.addAction(actionPauseUnpause)
 
-        actionRestart = QAction("restart", self)
+        actionRestart = QAction("Restart", self)
         actionRestart.triggered.connect(self.onClickRestart)
         self.widgets.toolBar2.addAction(actionRestart)
 
-        actionSettings = QAction("settings", self)
+        actionSettings = QAction("Settings", self)
         actionSettings.triggered.connect(self.onShowSettingsClick)
         self.widgets.toolBar2.addAction(actionSettings)
 
         self.widgets.toolBar3 = QToolBar()
+        self.widgets.layout.addWidget(self.widgets.toolBar2)
+
+        actionReset = QAction("Reset settings", self)
+        # actionReset.triggered.connect(self.onShowSettingsClick)
+        self.widgets.toolBar3.addAction(actionReset)
+
+        actionHelp = QAction("Help", self)
+        # actionReset.triggered.connect(self.onShowSettingsClick)
+        self.widgets.toolBar3.addAction(actionHelp)
+
+        self.widgets.toolBar4 = QToolBar()
         self.widgets.layout.addWidget(self.widgets.toolBar3)
 
         self.widgets.labelStatus = QLabel(self.LABEL_PLACEHOLDER)
-        self.widgets.toolBar3.addWidget(self.widgets.labelStatus)
+        self.widgets.toolBar4.addWidget(self.widgets.labelStatus)
 
     def renderGame(self, matrix: List[List[t.CellType]]):
         """
