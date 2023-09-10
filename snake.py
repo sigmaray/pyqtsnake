@@ -6,7 +6,7 @@ import os
 from typing import Literal, List
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import (QWidget, QApplication, QVBoxLayout, QToolBar, QAction,
-                             QLabel, QHBoxLayout, QCheckBox, QMessageBox, QStatusBar)
+                             QLabel, QHBoxLayout, QCheckBox, QMessageBox)
 from munch import Munch
 from settings_dialog import SettingsDialog
 import lib
@@ -288,18 +288,18 @@ class SnakeCheckboxes(QWidget):
                 self.unpause()
 
     def onShowHelpClick(self):
+        """When user clicks Help button: show help message."""
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
         msg.setWindowTitle("Help")
-        msg.setText(
-"""Controls:      
+        msg.setText("""
+Controls:
 * Pause/unpause: P key
 * Move snake: Left/Right/Up/Down keys
 * Restart: F5
 * Decrease speed: PgUp
-* Increase speed: PgDown"""
-        )
-            
+* Increase speed: PgDown
+        """)
         msg.exec_()
 
     def addToolbar(self):
@@ -365,10 +365,10 @@ class SnakeCheckboxes(QWidget):
             hl = QHBoxLayout()
 
             for _ in range(self.settings.cellNum):
-                c = QCheckBox()
-                c.setEnabled(False)
-                hl.addWidget(c)
-                row.append(c)
+                checkbox = QCheckBox()
+                checkbox.setEnabled(False)
+                hl.addWidget(checkbox)
+                row.append(checkbox)
 
             self.widgets.checkboxes.append(row)
             self.widgets.layout.addLayout(hl)
