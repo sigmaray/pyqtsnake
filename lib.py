@@ -163,7 +163,7 @@ def validateSettings(settings: t.Settings) -> bool:
     """
     keys = [field.name for field in dataclasses.fields(t.Settings)]
 
-    for key in ["checkIsOut", "checkIsColliding"]:
+    for key in ["checkIsOut", "checkIsColliding", "disableTimer"]:
         if key not in keys or not isinstance(getattr(settings, key), bool):
             return False
 

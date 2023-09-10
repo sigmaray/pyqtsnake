@@ -35,6 +35,7 @@ DEFAULT_SETTINGS = t.Settings(
     intervalMilliseconds=150,
     checkIsOut=False,
     checkIsColliding=False,
+    disableTimer=False
 )
 
 SETTINGS_FILE = "settings.json"

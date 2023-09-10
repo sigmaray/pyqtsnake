@@ -48,3 +48,4 @@ class Settings:
     intervalMilliseconds: int
     checkIsOut: bool
     checkIsColliding: bool
+    disableTimer: bool

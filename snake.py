@@ -45,7 +45,10 @@ class SnakeCheckboxes(QWidget):
 
         self.addBoard()
 
-        self.addTimer()
+        if not self.settings.disableTimer:
+            self.addTimer()
+        else:
+            self.makeMove()
 
     def addTimer(self):
         """Add timer and connect it to handler function."""
@@ -72,7 +75,10 @@ class SnakeCheckboxes(QWidget):
         """When Restart button is clicked: restart the game."""
         self.state = self.generateState()
         self.widgets.labelStatus.setText(self.LABEL_PLACEHOLDER)
-        self.timer.start(self.settings.intervalMilliseconds)
+        if not self.settings.disableTimer:
+            self.timer.start(self.settings.intervalMilliseconds)
+        else:
+            self.makeMove()
 
     def pause(self):
         """Pause the game."""
@@ -107,10 +113,11 @@ class SnakeCheckboxes(QWidget):
         @param message: message that will be shown to user
         """
         self.widgets.labelStatus.setText(message)
-        self.timer.stop()
+        if not self.settings.disableTimer:
+            self.timer.stop()
 
     def onTimer(self):
-        """When timer is triggerd: do next iteration of the game."""
+        """When timer is triggerd: do the next iteration of the game."""
         self.makeMove()
 
     def makeMove(self):
@@ -236,7 +243,8 @@ class SnakeCheckboxes(QWidget):
 
     def onShowSettingsClick(self):
         """When user clicks Settings button."""
-        self.pause()
+        if not self.settings.disableTimer:
+            self.pause()
         settings, result = SettingsDialog.run(self.settings)
         if result:
             lib.writeSettingsFile(settings)
@@ -245,7 +253,8 @@ class SnakeCheckboxes(QWidget):
             QtCore.QCoreApplication.quit()
             QtCore.QProcess.startDetached(sys.executable, sys.argv)
         else:
-            self.unpause()
+            if not self.settings.disableTimer:
+                self.unpause()
 
     def addToolbar(self):
         """Add toolbars with control buttons, bind buttons to click handlers."""
@@ -371,7 +380,7 @@ class SnakeCheckboxes(QWidget):
                             self.state.snakeDirection = "right"
                             self.state.switchingDirection = True
 
-                    if toSpeedUp:
+                    if toSpeedUp or self.settings.disableTimer:
                         self.makeMove()
 
         # else:
