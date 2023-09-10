@@ -2,12 +2,11 @@
 import random
 import os
 import json
-import sys
 from copy import deepcopy
 from typing import List, Optional
 import dataclasses
 from dacite import from_dict
-from PyQt5.QtWidgets import QCheckBox#, QMessageBox
+from PyQt5.QtWidgets import QCheckBox  # , QMessageBox
 import constants as c
 import type_declarations as t
 
@@ -120,9 +119,11 @@ def generateFoodPosition(snakeSegments: List[t.Coordinate], cellNum: int) -> Opt
         return None
     return random.choice(availableCells)
 
+
 def fullPath(fileName):
     """Append current directory (that contains script) to file name"""
     return os.path.dirname(os.path.realpath(__file__)) + "/" + fileName
+
 
 def doFileExist(fileName: str = c.SETTINGS_FILE) -> bool:
     """
