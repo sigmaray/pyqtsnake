@@ -6,7 +6,7 @@ import os
 from typing import Literal, List
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import (QWidget, QApplication, QVBoxLayout, QToolBar, QAction,
-                             QLabel, QHBoxLayout, QCheckBox, QMessageBox, qApp)
+                             QLabel, QHBoxLayout, QCheckBox, QMessageBox, QStatusBar)
 from munch import Munch
 from settings_dialog import SettingsDialog
 import lib
@@ -46,6 +46,9 @@ class SnakeCheckboxes(QWidget):
         self.addToolbar()
 
         self.addBoard()
+
+        self.widgets.labelStatus = QLabel(self.LABEL_PLACEHOLDER)
+        self.widgets.layout.addWidget(self.widgets.labelStatus)
 
         matrix = lib.snakeAndFoodToMatrix(self.state.snakeSegments,
                                           self.settings.cellNum, self.state.food)
@@ -344,9 +347,6 @@ class SnakeCheckboxes(QWidget):
 
         self.widgets.toolBar4 = QToolBar()
         self.widgets.layout.addWidget(self.widgets.toolBar4)
-
-        self.widgets.labelStatus = QLabel(self.LABEL_PLACEHOLDER)
-        self.widgets.toolBar4.addWidget(self.widgets.labelStatus)
 
     def renderGame(self, matrix: List[List[t.CellType]]):
         """
