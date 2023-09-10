@@ -261,7 +261,7 @@ class SnakeCheckboxes(QWidget):
             if not self.settings.disableTimer:
                 self.unpause()
 
-    def onResetSettingsClick(self):        
+    def onResetSettingsClick(self):
         """When user clicks Settings button."""
         if not self.settings.disableTimer:
             self.pause()
@@ -279,6 +279,21 @@ class SnakeCheckboxes(QWidget):
         else:
             if not self.settings.disableTimer:
                 self.unpause()
+
+    def onShowHelpClick(self):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setWindowTitle("Help")
+        msg.setText(
+"""Controls:      
+* Pause/unpause: P key
+* Move snake: Left/Right/Up/Down keys
+* Restart: F5
+* Decrease speed: PgUp
+* Increase speed: PgDown"""
+        )
+            
+        msg.exec_()
 
     def addToolbar(self):
         """Add toolbars with control buttons, bind buttons to click handlers."""
@@ -313,14 +328,14 @@ class SnakeCheckboxes(QWidget):
         self.widgets.toolBar2.addAction(actionSettings)
 
         self.widgets.toolBar3 = QToolBar()
-        self.widgets.layout.addWidget(self.widgets.toolBar2)
+        self.widgets.layout.addWidget(self.widgets.toolBar3)
 
         actionReset = QAction("Reset settings", self)
         actionReset.triggered.connect(self.onResetSettingsClick)
         self.widgets.toolBar3.addAction(actionReset)
 
         actionHelp = QAction("Help", self)
-        # actionReset.triggered.connect(self.onShowSettingsClick)
+        actionHelp.triggered.connect(self.onShowHelpClick)
         self.widgets.toolBar3.addAction(actionHelp)
 
         self.widgets.toolBar4 = QToolBar()
