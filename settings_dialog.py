@@ -52,6 +52,9 @@ class SettingsDialog(QDialog):
         self.inputs.cellNum = QLineEdit()
         self.inputs.cellNum.setText(str(existingSettings.cellNum))
         formLayout.addRow("Cell Num (>= 2):", self.inputs.cellNum)
+        self.inputs.cellSize = QLineEdit()
+        self.inputs.cellSize.setText(str(existingSettings.cellSize))
+        formLayout.addRow("Cell Cize (>= 1):", self.inputs.cellSize)
         self.inputs.checkIsOut = QCheckBox()
         self.inputs.checkIsOut.setChecked(existingSettings.checkIsOut)
         formLayout.addRow("Check is Out", self.inputs.checkIsOut)
@@ -89,6 +92,7 @@ class SettingsDialog(QDialog):
                 intervalMilliseconds=int(
                     self.inputs.intervalMilliseconds.text()),
                 cellNum=int(self.inputs.cellNum.text()),
+                cellSize=int(self.inputs.cellSize.text()),
                 checkIsOut=self.inputs.checkIsOut.isChecked(),
                 checkIsColliding=self.inputs.checkIsColliding.isChecked(),
                 disableTimer=self.inputs.disableTimer.isChecked()

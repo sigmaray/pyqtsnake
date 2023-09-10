@@ -9,12 +9,9 @@ from snake import SnakeCheckboxes
 class SnakeCanvas(SnakeCheckboxes):
     """PyQt window (with canvas instead of checkboxes)."""
 
-    # Width and height of a single game cell
-    CELL_SIZE = 20
-
     def addBoard(self):
         """Override method of parent class: create canvas instead of checkboxes."""
-        boardSize = self.CELL_SIZE * self.settings.cellNum
+        boardSize = self.settings.cellSize * self.settings.cellNum
 
         self.widgets.label = QLabel()
         # self.label.setFixedSize(boardSize, boardSize)
@@ -25,7 +22,7 @@ class SnakeCanvas(SnakeCheckboxes):
 
     def renderGame(self, matrix):
         """Override method of parent class: render to canvas instead of checkboxes."""
-        libg.matrixToCanvas(matrix, self.CELL_SIZE, self.widgets.painter)
+        libg.matrixToCanvas(matrix, self.settings.cellSize, self.widgets.painter)
         self.update()
 
 

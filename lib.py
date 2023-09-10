@@ -167,7 +167,7 @@ def validateSettings(settings: t.Settings) -> bool:
         if key not in keys or not isinstance(getattr(settings, key), bool):
             return False
 
-    for key in ["cellNum", "intervalMilliseconds"]:
+    for key in ["cellNum", "intervalMilliseconds", "cellSize"]:
         if (
             key not in keys or
             not isinstance(getattr(settings, key), int) or
@@ -177,7 +177,10 @@ def validateSettings(settings: t.Settings) -> bool:
 
     if settings.cellNum < 2:
         return False
-
+    
+    if settings.cellSize < 1:
+        return False
+    
     return True
 
 
