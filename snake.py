@@ -47,10 +47,12 @@ class SnakeCheckboxes(QWidget):
 
         self.addBoard()
 
+        matrix = lib.snakeAndFoodToMatrix(self.state.snakeSegments,
+                                          self.settings.cellNum, self.state.food)
+        self.renderGame(matrix)
+
         if not self.settings.disableTimer:
             self.addTimer()
-        else:
-            self.makeMove()
 
     def addTimer(self):
         """Add timer and connect it to handler function."""
@@ -77,10 +79,11 @@ class SnakeCheckboxes(QWidget):
         """When Restart button is clicked: restart the game."""
         self.state = self.generateState()
         self.widgets.labelStatus.setText(self.LABEL_PLACEHOLDER)
+        matrix = lib.snakeAndFoodToMatrix(self.state.snakeSegments,
+                                          self.settings.cellNum, self.state.food)
+        self.renderGame(matrix)
         if not self.settings.disableTimer:
             self.timer.start(self.settings.intervalMilliseconds)
-        else:
-            self.makeMove()
 
     def pause(self):
         """Pause the game."""
@@ -131,8 +134,6 @@ class SnakeCheckboxes(QWidget):
         * Check if game is over
         * Call renderer
         """
-        ateFood = lib.isEating(self.state.snakeSegments, self.state.food)
-
         oldHead = self.state.snakeSegments[-1]
         newHead = deepcopy(oldHead)
 
@@ -158,6 +159,10 @@ class SnakeCheckboxes(QWidget):
             else:
                 newHead.y = 0
 
+        self.state.snakeSegments.append(newHead)
+
+        ateFood = lib.isEating(self.state.snakeSegments, self.state.food)
+
         if not ateFood:
             self.state.snakeSegments.pop(0)
         else:
@@ -166,8 +171,6 @@ class SnakeCheckboxes(QWidget):
             if not self.state.food:
                 self.endGame("You won!\nPress F5 or click \"Restart\" button")
                 return
-
-        self.state.snakeSegments.append(newHead)
 
         if self.settings.checkIsOut and lib.isOut(self.state.snakeSegments, self.settings.cellNum):
             self.endGame("Snake is out of board. You lost")
