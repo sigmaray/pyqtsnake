@@ -19,11 +19,11 @@ class CHECKBOX_COLORS(str, Enum):
 class CANVAS_COLORS(str, Enum):
     """Colors that should be used in canvas."""
 
-    emptyBackground = "#ccc"
-    snakeSegmentBackground = "Green"
-    snakeHeadBackground = "Blue"
+    emptyBackground = "GhostWhite"
+    snakeSegmentBackground = "ForestGreen"
+    snakeHeadBackground = "Chartreuse"
     foodBackground = "Red"
-    border = "SlateBlue"
+    border = "Black"
 
     def __str__(self) -> str:
         """Make it possible to write ENUM.field instead of ENUM.field.value."""
