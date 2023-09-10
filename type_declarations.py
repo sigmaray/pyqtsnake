@@ -45,6 +45,7 @@ class Settings:
     """Game settings."""
 
     cellNum: int
+    cellSize: int
     intervalMilliseconds: int
     checkIsOut: bool
     checkIsColliding: bool
