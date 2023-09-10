@@ -6,64 +6,72 @@ import type_declarations as t
 import constants
 
 
-def matrixToCanvas(matrix: List[List[t.CellType]], cellNum: int, painter: QPainter):
+def matrixToCanvas(matrix: List[List[t.CellType]], cellSize: int, painter: QPainter):
     """
     Paint 2D array on canvas.
 
     @param matrix: 2D array that describes game board
-    @param cellNum: width/height of the board (in cells)
+    @param cellSize: width/height of the board (in cells)
     @param painter: canvas painter that will be used to draw the cells
     """
     for y, row in enumerate(matrix):
         for x, value in enumerate(row):
             if value == t.CellTypes.empty:
-                drawEmpty(painter, x * cellNum, y *
-                          cellNum, cellNum, cellNum)
+                drawEmpty(painter, x * cellSize, y *
+                          cellSize, cellSize)
             else:
                 if value == t.CellTypes.snakeSegment:
-                    drawSnakeSegment(painter, x * cellNum,
-                                     y * cellNum, cellNum, cellNum)
+                    drawSnakeSegment(painter, x * cellSize,
+                                     y * cellSize, cellSize)
                 elif value == t.CellTypes.snakeHead:
-                    drawSnakeHead(painter, x * cellNum, y *
-                                  cellNum, cellNum, cellNum)
+                    drawSnakeHead(painter, x * cellSize, y *
+                                  cellSize, cellSize)
                 elif value == t.CellTypes.food:
-                    drawFood(painter, x * cellNum, y *
-                             cellNum, cellNum, cellNum)
+                    drawFood(painter, x * cellSize, y *
+                             cellSize, cellSize)
 
 
 def drawRectangle(
         painter: QPainter,
         x: int,
         y: int,
-        width: int,
-        height: int,
+        size: int,
         backgroundColor: str = "#ccc",
-        borderColor: str = constants.CANVAS_COLORS.border):
+        borderColor: str = constants.CANVAS_COLORS.border,
+        border = None,
+        margin = None
+    ):
     """
     Draw board cell on canvas.
 
     @param painter: canvas painter that will be used to draw the cells
     @param x: x of left upper corner of board cell to be drawn
     @param y: y of left upper corner of board cell to be drawn
-    @param width: cell width
-    @param height: cell height
+    @param width: cell width/height
     @param backgroundColor: cell background color
     @param borderColor: cell border color
 
     """
+    b = border
+    m = margin
+
+    if b == None:
+        b = int(size * 0.05)
+    if m == None:
+        m = int(size * 0.1)
+
     pen = QPen()
     pen.setColor(QColor(borderColor))
     painter.setPen(pen)
     painter.setBrush(QBrush(QColor(backgroundColor), Qt.SolidPattern))  # type: ignore
-    painter.drawRect(x, y, width - 1, height - 1)
+    painter.drawRect(x + b + m, y + b + m, size - b * 2 - m * 2, size - b * 2 - m * 2)
 
 
 def drawEmpty(
         painter: QPainter,
         x: int,
         y: int,
-        width: int,
-        height: int,
+        size: int,
         backgroundColor: str = constants.CANVAS_COLORS.emptyBackground,
         borderColor: str = constants.CANVAS_COLORS.border
 ):
@@ -73,8 +81,7 @@ def drawEmpty(
     @param painter: canvas painter that will be used to draw empty cell
     @param x: x of left upper corner of empty cell to be drawn
     @param y: y of left upper corner of empty cell to be drawn
-    @param width: empty cell width
-    @param height: empty cell height
+    @param width: empty cell width/height
     @param backgroundColor: empty cell background color
     @param borderColor: empty cell border color
     """
@@ -82,8 +89,7 @@ def drawEmpty(
         painter,
         x,
         y,
-        width,
-        height,
+        size,
         backgroundColor,
         borderColor
     )
@@ -93,8 +99,7 @@ def drawSnakeSegment(
         painter: QPainter,
         x: int,
         y: int,
-        widht: int,
-        height: int,
+        size: int,
         backgroundColor: str = constants.CANVAS_COLORS.snakeSegmentBackground,
         borderColor: str = constants.CANVAS_COLORS.border
 ):
@@ -104,8 +109,7 @@ def drawSnakeSegment(
     @param painter: canvas painter that will be used to draw snake segment
     @param x: x of left upper corner of snake segment to be drawn
     @param y: y of left upper corner of snake segment to be drawn
-    @param width: snake segment width
-    @param height: snake segment height
+    @param width: snake segment width/height
     @param backgroundColor: snake segment background color
     @param borderColor: snake segment border color
     """
@@ -113,8 +117,7 @@ def drawSnakeSegment(
         painter,
         x,
         y,
-        widht,
-        height,
+        size,
         backgroundColor,
         borderColor,
     )
@@ -124,8 +127,7 @@ def drawSnakeHead(
         painter: QPainter,
         x: int,
         y: int,
-        width: int,
-        height: int,
+        size: int,
         backgroundColor: str = constants.CANVAS_COLORS.snakeHeadBackground,
         borderColor: str = constants.CANVAS_COLORS.border
 ):
@@ -135,8 +137,7 @@ def drawSnakeHead(
     @param painter: canvas painter that will be used to draw snake head
     @param x: x of left upper corner of snake head to be drawn
     @param y: y of left upper corner of snake head to be drawn
-    @param width: snake head width
-    @param height: snake head height
+    @param width: snake head width/height
     @param backgroundColor: snake head background color
     @param borderColor: snake head border color
     """
@@ -144,8 +145,7 @@ def drawSnakeHead(
         painter,
         x,
         y,
-        width,
-        height,
+        size,
         backgroundColor,
         borderColor
     )
@@ -155,8 +155,7 @@ def drawFood(
         painter: QPainter,
         x: int,
         y: int,
-        width: int,
-        height: int,
+        size: int,
         backgroundColor: str = constants.CANVAS_COLORS.foodBackground,
         borderColor: str = constants.CANVAS_COLORS.border):
     """
@@ -165,8 +164,7 @@ def drawFood(
     @param painter: canvas painter that will be used to draw food
     @param x: x of left upper corner of food to be drawn
     @param y: y of left upper corner of food to be drawn
-    @param width: food width
-    @param height: food height
+    @param width: food width/height
     @param backgroundColor: food background color
     @param borderColor: food border color
     """
@@ -174,8 +172,7 @@ def drawFood(
         painter,
         x,
         y,
-        width,
-        height,
+        size,
         backgroundColor,
         borderColor
     )
