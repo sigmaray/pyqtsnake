@@ -164,7 +164,7 @@ class SnakeCheckboxes(QWidget):
             self.state.food = lib.generateFoodPosition(
                 self.state.snakeSegments, self.settings.cellNum)
             if not self.state.food:
-                self.endGame("You won!")
+                self.endGame("You won! Press F5 or click \"Restart\" button")
                 return
 
         self.state.snakeSegments.append(newHead)
@@ -321,7 +321,7 @@ class SnakeCheckboxes(QWidget):
         self.widgets.toolBar3.addAction(actionHelp)
 
         self.widgets.toolBar4 = QToolBar()
-        self.widgets.layout.addWidget(self.widgets.toolBar3)
+        self.widgets.layout.addWidget(self.widgets.toolBar4)
 
         self.widgets.labelStatus = QLabel(self.LABEL_PLACEHOLDER)
         self.widgets.toolBar4.addWidget(self.widgets.labelStatus)
@@ -368,6 +368,7 @@ class SnakeCheckboxes(QWidget):
             QtCore.Qt.Key_Right,
             QtCore.Qt.Key_P,
             1047,  # "p" in russian layout
+            QtCore.Qt.Key_F5,
             QtCore.Qt.Key_PageUp,
             QtCore.Qt.Key_PageDown
         ]
@@ -381,6 +382,8 @@ class SnakeCheckboxes(QWidget):
                 self.onIntervalIncrClick()
             elif event.key() == QtCore.Qt.Key_PageDown:
                 self.onIntervalDecrClick()
+            elif event.key() == QtCore.Qt.Key_F5:
+                self.onClickRestart()
             else:
                 toSpeedUp = False
                 if not self.state.switchingDirection and not self.state.isPaused:
