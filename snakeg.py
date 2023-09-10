@@ -17,6 +17,7 @@ class SnakeCanvas(SnakeCheckboxes):
         # self.label.setFixedSize(boardSize, boardSize)
         self.widgets.layout.addWidget(self.widgets.label)
         canvas = QtGui.QPixmap(boardSize, boardSize)
+        canvas.fill(QtGui.QColor("white"))
         self.widgets.label.setPixmap(canvas)
         self.widgets.painter = QtGui.QPainter(self.widgets.label.pixmap())
 
