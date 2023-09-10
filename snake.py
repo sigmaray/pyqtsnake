@@ -2,14 +2,16 @@
 """Snake game with checkboxes."""
 from copy import deepcopy
 import sys
+import os
 from typing import Literal, List
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import (QWidget, QApplication, QVBoxLayout, QToolBar, QAction,
-                             QLabel, QHBoxLayout, QCheckBox)
+                             QLabel, QHBoxLayout, QCheckBox, QMessageBox, qApp)
 from munch import Munch
 from settings_dialog import SettingsDialog
 import lib
 import type_declarations as t
+import constants as c
 
 
 class SnakeCheckboxes(QWidget):
@@ -256,6 +258,25 @@ class SnakeCheckboxes(QWidget):
             if not self.settings.disableTimer:
                 self.unpause()
 
+    def onResetSettingsClick(self):        
+        """When user clicks Settings button."""
+        if not self.settings.disableTimer:
+            self.pause()
+
+        quit_msg = "Are you sure you want to reset settings to default values and restart the game?"
+        reply = QMessageBox.question(self, 'Message',
+                                     quit_msg, QMessageBox.No, QMessageBox.Yes)
+
+        if reply == QMessageBox.Yes:
+            os.remove(c.SETTINGS_FILE)
+
+            # https://stackoverflow.com/a/62611055
+            QtCore.QCoreApplication.quit()
+            QtCore.QProcess.startDetached(sys.executable, sys.argv)
+        else:
+            if not self.settings.disableTimer:
+                self.unpause()
+
     def addToolbar(self):
         """Add toolbars with control buttons, bind buttons to click handlers."""
         self.widgets.toolBar = QToolBar()
@@ -292,7 +313,7 @@ class SnakeCheckboxes(QWidget):
         self.widgets.layout.addWidget(self.widgets.toolBar2)
 
         actionReset = QAction("Reset settings", self)
-        # actionReset.triggered.connect(self.onShowSettingsClick)
+        actionReset.triggered.connect(self.onResetSettingsClick)
         self.widgets.toolBar3.addAction(actionReset)
 
         actionHelp = QAction("Help", self)
