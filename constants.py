@@ -31,9 +31,9 @@ class CANVAS_COLORS(str, Enum):
 
 
 DEFAULT_SETTINGS = t.Settings(
-    cellNum=5,
-    intervalMilliseconds=150,
-    cellSize=30,
+    cellNum=3,
+    intervalMilliseconds=300,
+    cellSize=40,
     checkIsOut=False,
     checkIsColliding=False,
     disableTimer=False
