@@ -58,6 +58,9 @@ class SettingsDialog(QDialog):
         self.inputs.checkIsColliding = QCheckBox()
         self.inputs.checkIsColliding.setChecked(existingSettings.checkIsColliding)
         formLayout.addRow("Check is Colliding", self.inputs.checkIsColliding)
+        self.inputs.disableTimer = QCheckBox()
+        self.inputs.disableTimer.setChecked(existingSettings.disableTimer)
+        formLayout.addRow("Disable timer", self.inputs.disableTimer)
 
         buttonBox = QDialogButtonBox()
         buttonBox.setStandardButtons(
@@ -87,7 +90,8 @@ class SettingsDialog(QDialog):
                     self.inputs.intervalMilliseconds.text()),
                 cellNum=int(self.inputs.cellNum.text()),
                 checkIsOut=self.inputs.checkIsOut.isChecked(),
-                checkIsColliding=self.inputs.checkIsColliding.isChecked()
+                checkIsColliding=self.inputs.checkIsColliding.isChecked(),
+                disableTimer=self.inputs.disableTimer.isChecked()
             )
             if validateSettings(settings):
                 self.settings = settings
