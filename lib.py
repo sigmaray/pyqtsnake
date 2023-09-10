@@ -208,29 +208,27 @@ def readOrCreateSettings(defaultSettings: t.Settings = c.DEFAULT_SETTINGS) -> t.
 
 def genStyleSheet(color1: str, color2: str = "#fff") -> str:
     """
-    Generate checkbox css (it should be diffirent in windows and linux).
+    Generate checkbox css
 
     @param color1: first color of checkbox
     @param color2: second color of checkbox (can be used only in linux)
     @return: css for QCheckBox
     """
-    if sys.platform == "win32":
-        return (
-                "QCheckBox {"
-                    "margin-bottom: 2em;"                
-                "}\n"
-                "QCheckBox::indicator {" 
-                    "width: 1.2em;"
-                    "height: 1.2em;"
-                "}\n"
-                "QCheckBox::indicator:checked {" +
-                    "background-color: " + color1 + "; "
-                    "image: url(checkbox.inverted.png);"
-                "}"
-            )
+    # return "color: " + color2 + ";" + "background-color: " + color1
 
-    return "color: " + color2 + ";" + "background-color: " + color1
-
+    return (
+        "QCheckBox {"
+            "margin-bottom: 2em;"                
+        "}\n"
+        "QCheckBox::indicator {" 
+            "width: 1.2em;"
+            "height: 1.2em;"
+        "}\n"
+        "QCheckBox::indicator:checked {" +
+            "background-color: " + color1 + "; "
+            "image: url(checkbox.inverted.png);"
+        "}"
+    )
 
 def matrixToCheckboxes(matrix: List[List[t.CellType]], checkboxes: List[QCheckBox]):
     """
