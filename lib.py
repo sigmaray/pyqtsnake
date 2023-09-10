@@ -7,7 +7,7 @@ from copy import deepcopy
 from typing import List, Optional
 import dataclasses
 from dacite import from_dict
-from PyQt5.QtWidgets import QCheckBox
+from PyQt5.QtWidgets import QCheckBox, QMessageBox
 import constants as c
 import type_declarations as t
 
@@ -198,7 +198,9 @@ def readOrCreateSettings(defaultSettings: t.Settings = c.DEFAULT_SETTINGS) -> t.
     settings = readSettingsFile()
 
     if not validateSettings(settings):
-        print("settings.json is not valid. " +
+        QMessageBox.warning(None, "Error", "settings.json is not valid. " +
+              "May be you are you using settings file from previous version " +
+              "of application and it has different format. " +
               "You can delete it and restart the application. " +
               "App will recreate settings file if it's not present")
         sys.exit()
