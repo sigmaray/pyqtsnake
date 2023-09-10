@@ -215,10 +215,19 @@ def genStyleSheet(color1: str, color2: str = "#fff") -> str:
     @return: css for QCheckBox
     """
     if sys.platform == "win32":
-        return ("QCheckBox::indicator {" +
-                "background-color: " + color1 + "; "
+        return (
+                "QCheckBox {"
+                    "margin-bottom: 2em;"                
+                "}\n"
+                "QCheckBox::indicator {" 
+                    "width: 1.2em;"
+                    "height: 1.2em;"
+                "}\n"
+                "QCheckBox::indicator:checked {" +
+                    "background-color: " + color1 + "; "
+                    "image: url(checkbox.inverted.png);"
                 "}"
-                )
+            )
 
     return "color: " + color2 + ";" + "background-color: " + color1
 

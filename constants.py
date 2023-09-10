@@ -6,9 +6,9 @@ import type_declarations as t
 class CHECKBOX_COLORS(str, Enum):
     """Colors that should be used for checkboxes."""
 
-    empty = "#fff"
-    snakeSegment = "Olive"
-    snakeHead = "Green"
+    empty = "DarkGrey"
+    snakeSegment = "DarkGreen"
+    snakeHead = "MidnightBlue"
     food = "Red"
 
     def __str__(self) -> str:
