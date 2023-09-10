@@ -7,7 +7,7 @@ from copy import deepcopy
 from typing import List, Optional
 import dataclasses
 from dacite import from_dict
-from PyQt5.QtWidgets import QCheckBox, QMessageBox
+from PyQt5.QtWidgets import QCheckBox#, QMessageBox
 import constants as c
 import type_declarations as t
 
@@ -120,15 +120,18 @@ def generateFoodPosition(snakeSegments: List[t.Coordinate], cellNum: int) -> Opt
         return None
     return random.choice(availableCells)
 
+def fullPath(fileName):
+    """Append current directory (that contains script) to file name"""
+    return os.path.dirname(os.path.realpath(__file__)) + "/" + fileName
 
-def doSettingsExist(fileName: str = c.SETTINGS_FILE) -> bool:
+def doFileExist(fileName: str = c.SETTINGS_FILE) -> bool:
     """
     Check if settings.json file exists on disk.
 
     @param fileName: file name to check
     @return: does file exist?
     """
-    return os.path.isfile(fileName)
+    return os.path.isfile(fullPath(fileName))
 
 
 def writeSettingsFile(settings: t.Settings, fileName: str = c.SETTINGS_FILE) -> None:
@@ -139,7 +142,7 @@ def writeSettingsFile(settings: t.Settings, fileName: str = c.SETTINGS_FILE) -> 
     @param fileName: file name to check
     @return: does file exist?
     """
-    with open(fileName, 'w', encoding="utf-8") as f:
+    with open(fullPath(fileName), 'w', encoding="utf-8") as f:
         f.write(json.dumps(dataclasses.asdict(settings)))
 
 
@@ -150,7 +153,7 @@ def readSettingsFile(fileName: str = c.SETTINGS_FILE) -> t.Settings:
     @param fileName: file name to check
     @return: object with settings values
     """
-    with open(fileName, encoding="utf-8") as f:
+    with open(fullPath(fileName), encoding="utf-8") as f:
         return from_dict(data_class=t.Settings, data=json.load(f))
 
 
@@ -191,19 +194,19 @@ def readOrCreateSettings(defaultSettings: t.Settings = c.DEFAULT_SETTINGS) -> t.
     @param defaultSettings: object with default settings
     @return: settings that were read from file
     """
-    if not doSettingsExist():
+    if not doFileExist():
         print("settings.json does not exist, creating it")
         writeSettingsFile(defaultSettings)
 
     settings = readSettingsFile()
 
-    if not validateSettings(settings):
-        QMessageBox.warning(None, "Error", "settings.json is not valid. " +
-              "May be you are you using settings file from previous version " +
-              "of application and it has different format. " +
-              "You can delete it and restart the application. " +
-              "App will recreate settings file if it's not present")
-        sys.exit()
+    # if not validateSettings(settings):
+    #     QMessageBox.warning(None, "Error", "settings.json is not valid. " +
+    #           "May be you are you using settings file from previous version " +
+    #           "of application and it has different format. " +
+    #           "You can delete it and restart the application. " +
+    #           "App will recreate settings file if it's not present")
+    #     sys.exit()
 
     return settings
 
